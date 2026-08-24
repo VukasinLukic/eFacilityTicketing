@@ -1,0 +1,46 @@
+<div class="form-page-container">
+  <div class="form-container">
+    <form [formGroup]="newRentalForm" (ngSubmit)="addRental()">
+      <h1>Kreiraj Ugovor o Iznajmljivanju</h1>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="startDate">Datum početka</label>
+          <input type="date" id="startDate" formControlName="startDate" />
+        </div>
+        <div class="form-group">
+          <label for="endDate">Datum završetka</label>
+          <input type="date" id="endDate" formControlName="endDate" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="client">Klijent</label>
+          <select id="client" formControlName="client">
+            <option [ngValue]="null" disabled>Izaberite klijenta</option>
+            <option *ngFor="let client of clients" [ngValue]="client">{{ client.name }} {{ client.surname }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="car">Vozilo</label>
+          <select id="car" formControlName="car">
+            <option [ngValue]="null" disabled>Izaberite vozilo</option>
+            <option *ngFor="let car of cars" [ngValue]="car">{{ car.carModel.name }} ({{car.licensePlate}})</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="notes">Napomene</label>
+          <textarea id="notes" formControlName="notes" placeholder="Dodatne informacije..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button type="submit" class="button" [disabled]="newRentalForm.invalid">Kreiraj Ugovor</button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,81 @@
+/* --- rental-modal.component.css (ISPRAVLJENA VERZIJA) --- */
+
+/*
+  :host je selektor za samu <app-rental-modal> komponentu.
+  Ovo je ključni deo rešenja.
+*/
+:host {
+  /* 1. Pozicioniranje u odnosu na prvog "relative" roditelja (karticu) */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  /* 2. Layer preko kartice, ali ne preko cele stranice */
+  background-color: rgba(31, 31, 31, 0.95); /* Skoro neprozirna tamna pozadina */
+  z-index: 10; /* Dovoljno da bude iznad sadržaja kartice */
+
+  /* 3. Centriranje .modal-content-a unutar ovog layera */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* 4. Opciono: Zaobljene ivice da se poklope sa karticom */
+  border-radius: 8px;
+}
+.modal-backdrop {
+  width: 100%;
+  height: 100%;
+  background-color: #1F1F1FF2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* Sadržaj modala - ostaje skoro isti */
+.modal-content {
+  background-color: rgba(31, 31, 31, 0);
+  padding: 2rem;
+
+
+  width: 100%;
+  max-width: 450px;
+
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ... ostatak CSS-a za formu unutar modala je isti ... */
+
+.modal-content h2 {
+  margin-top: 0;
+  text-align: center;
+  color: #007bff;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.button-secondary {
+  background-color: #6c757d;
+}
+.button-secondary:hover {
+  background-color: #5a6268;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

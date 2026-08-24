@@ -1,0 +1,74 @@
+:host {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px; /* Da se poklopi sa karticom */
+}
+
+.modal-backdrop {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(31, 31, 31, 0.98); /* Skoro neprozirna pozadina */
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  padding: 2rem;
+  width: 100%;
+  max-width: 600px; /* Širi modal za dve kolone */
+  box-sizing: border-box;
+  animation: fadeIn 0.3s;
+}
+
+.modal-content h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: #ffffff;
+}
+
+/* Stilovi za formu unutar modala */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dve jednake kolone */
+  gap: 1.5rem; /* Razmak između kolona */
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Razmak između polja unutar jedne kolone */
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.button-secondary {
+  background-color: #6c757d;
+}
+.button-secondary:hover {
+  background-color: #5a6268;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

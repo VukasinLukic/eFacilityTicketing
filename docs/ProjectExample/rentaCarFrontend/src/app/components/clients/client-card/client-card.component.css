@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  background-color: #1f1f1f;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 10px;
+  position: relative; /* Za modal */
+  transition: box-shadow 0.3s;
+}
+
+:host(:hover) {
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
+}
+
+.info-section h4 {
+  margin: 0.6rem 0;
+  font-size: 1rem;
+}
+
+.info-section h4 b {
+  color: #007bff;
+  min-width: 80px;
+  display: inline-block;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1rem;
+}

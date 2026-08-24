@@ -1,0 +1,18 @@
+<div class="page-container">
+  <div class="page-header">
+    <h1>Lista Klijenata</h1>
+    <button *ngIf="UserService.getUserStatus() === 'admin'" routerLink="/clients/add" class="button add-button">
+      + Dodaj Novog Klijenta
+    </button>
+  </div>
+  <div class="search-bar">
+    <input (input)="onSearch(search.value)" type="text" placeholder="Pretraži klijente po prezimenu" #search class="search-input">
+  </div>
+  <div class="card-grid">
+    <app-client-card
+      *ngFor="let c of filteredClients"
+      [client]="c"
+      (removedClient)="deleteClient(c)">
+    </app-client-card>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+/* Stilovi specifični za modal */
+.modal-backdrop {
+  position: absolute; /* Prekriva samo roditeljsku karticu */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(31, 31, 31, 0.95); /* Polu-prozirna tamna pozadina */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  border-radius: 8px;
+}
+
+.modal-content {
+  background-color: rgb(44, 44, 44);
+  margin-top: 70px;
+  border-radius: 20px;
+  border: 1px solid;
+  border-color: #5a5a5a;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px; /* Može biti i širi od kartice */
+  box-sizing: border-box;
+}
+
+.modal-content h2 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}

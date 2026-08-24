@@ -1,0 +1,38 @@
+<div class="modal-backdrop">
+  <div class="modal-content">
+    <h2>Izmena Podataka o Klijentu</h2>
+    <div class="form-grid">
+      <div class="form-column">
+        <label>JMBG:
+          <input type="text" [(ngModel)]="tempClient.jmbg" disabled />
+        </label>
+        <label>Ime:
+          <input type="text" [(ngModel)]="tempClient.name" />
+        </label>
+        <label>Prezime:
+          <input type="text" [(ngModel)]="tempClient.surname" />
+        </label>
+      </div>
+      <div class="form-column">
+        <label>Godište:
+          <input type="number" [(ngModel)]="tempClient.age" />
+        </label>
+        <label>Telefon:
+          <input type="text" [(ngModel)]="tempClient.mobile" />
+        </label>
+        <label>Grad:
+          <select [(ngModel)]="tempClient.city">
+            <option *ngFor="let city of cities" [ngValue]="city">
+              {{ city.name }}
+            </option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="modal-buttons">
+      <button (click)="save()">Sačuvaj</button>
+      <button (click)="cancel()">Otkaži</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+<!-- Koristimo .modal-backdrop kao pozadinu koja prekriva samo karticu -->
+<div class="modal-backdrop" (click)="cancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>Izmena Podataka o Vozilu</h2>
+
+    <!-- Koristimo istu .form-grid strukturu kao za dodavanje -->
+    <div class="form-grid">
+
+      <!-- LEVA KOLONA -->
+      <div class="form-column">
+        <div class="form-group">
+          <label>Registarska oznaka:</label>
+          <input type="text" [(ngModel)]="tempCar.licensePlate" />
+        </div>
+
+        <div class="form-group">
+          <label>Godište:</label>
+          <input type="number" [(ngModel)]="tempCar.year" />
+        </div>
+
+        <div class="form-group">
+          <label>Menjač:</label>
+          <input type="text" [(ngModel)]="tempCar.transmission" />
+        </div>
+      </div>
+
+      <!-- DESNA KOLONA -->
+      <div class="form-column">
+        <div class="form-group">
+          <label>Model vozila:</label>
+          <select [(ngModel)]="tempCar.carModel">
+            <option *ngFor="let model of carModels" [ngValue]="model">
+              {{ model.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Napomene:</label>
+          <input type="text" [(ngModel)]="tempCar.notes" />
+        </div>
+
+        <div class="form-group">
+          <label>URL Slike:</label>
+          <input type="text" [(ngModel)]="tempCar.picture" />
+        </div>
+      </div>
+
+    </div>
+
+    <!-- DUGMAD -->
+    <div class="modal-buttons">
+      <button class="button" (click)="save()">Sačuvaj</button>
+      <button class="button button-secondary" (click)="cancel()">Otkaži</button>
+    </div>
+  </div>
+</div>

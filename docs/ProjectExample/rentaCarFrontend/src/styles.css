@@ -1,0 +1,143 @@
+/* --- GLOBALNI STILOVI (FINALNA VERZIJA) --- */
+
+/* 1. Import fonta */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* 2. Reset i osnovna podešavanja */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: 'Roboto', sans-serif;
+  background-color: #121212; /* Tamna pozadina */
+  color: #f0f0f0; /* SVETAO (skoro beo) tekst za celu aplikaciju */
+}
+
+/* 3. Globalno resetovanje stilova za linkove */
+a {
+  font-size: 18px;
+  color: #fdfeff; /* Svetlo plava za linkove, da se razlikuju */
+  text-decoration: none; /* Ukloni podvlačenje SVUDA */
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+  color: #a0d6fd; /* Svetlija plava pri hoveru */
+   /* Opciono: dodaj podvlačenje samo na hover */
+}
+
+/* 4. Globalni naslovi */
+h1, h2, h3 {
+  text-align: center;
+  color: #fafafa; /* Potpuno beli naslovi */
+}
+h4 {
+
+  color: #ffffff; /* Potpuno beli naslovi */
+}
+
+/* 5. Globalne forme (iste kao pre) */
+input[type="text"],
+input[type="password"],
+input[type="date"],
+input[type="number"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #555;
+  border-radius: 4px;
+  box-sizing: border-box;
+  background-color: #2a2a2a;
+  color: #e0e0e0;
+  font-size: 1rem;
+}
+
+label {
+
+  font-weight: 500;
+  margin-bottom: 5px;
+  display: block;
+  color: #f0f0f0; /* I labele su svetle */
+}
+
+/* 6. Globalna dugmad (ista kao pre) */
+.button, button {
+  background-color: #007bff;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  text-transform: uppercase;
+}
+
+.button:hover, button:hover {
+  background-color: #0056b3;
+}
+.page-header {
+  /* 1. Postavljamo Flexbox i centriramo sve horizontalno */
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Vertikalno poravnanje */
+
+  /* 2. Definišemo razmak između naslova i dugmeta */
+  gap: 2rem; /* Podesi ovaj razmak po želji (npr. 1.5rem, 3rem) */
+
+  /* 3. Opšti stilovi za izgled */
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #333;
+}
+
+.page-header h1 {
+  margin: 0; /* Uklanjamo podrazumevanu marginu da ne kvari centriranje */
+}
+.form-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  padding-top: 100px; /* Više prostora od vrha zbog navigacije */
+  box-sizing: border-box; /* Da padding ne promeni dimenzije */
+}
+
+.form-container {
+  width: 100%;
+  max-width: 850px; /* Malo širi za razne forme */
+  padding: 2.5rem;
+  background: #1f1f1f; /* Prilagođeno tamnoj temi */
+  border: 1px solid #333;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.form-container h1 {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: #ffffff;
+}
+
+.form-row {
+  display: flex;
+  gap: 2rem; /* Razmak između kolona */
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  flex: 1; /* Kolone zauzimaju jednaku širinu */
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}

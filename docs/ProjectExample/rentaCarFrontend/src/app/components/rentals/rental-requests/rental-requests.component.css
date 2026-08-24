@@ -1,0 +1,29 @@
+/* Čista verzija originalnog CSS-a */
+.page-container {
+  /* Pozadina i font dolaze iz styles.css */
+  min-height: 100vh;
+  padding: 20px;
+  padding-top: 60px; /* Ostavljamo prostor za navbar */
+}
+
+h1 {
+  text-align: center;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.no-items-message {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #efefef;
+  text-align: center;
+}
+
+.card-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}

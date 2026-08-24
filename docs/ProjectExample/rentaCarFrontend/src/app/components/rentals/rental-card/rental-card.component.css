@@ -1,0 +1,40 @@
+/* Čista verzija originalnog CSS-a */
+:host {
+  display: block; /* Omogućava da se flexbox primeni na host element */
+  /*background: url("../../../");*/ /* Tvoja pozadinska slika */
+  border: none;
+  border-radius: 15px;
+  background-size: cover;
+  background-position: center;
+  width: 280px;
+  min-height: 280px; /* Min-height je bolji od fiksnog height */
+  padding: 15px;
+  font-family: 'Poppins', sans-serif;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+}
+
+:host(:hover) {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.18);
+}
+
+.info-section h4 {
+  margin: 6px 0;
+  font-weight: 600;
+  color: #e8e8e8;
+  font-size: 17px;
+}
+h4 b {
+  color: #47a7ff;
+  min-width: 100px;
+  display: inline-block;
+}
+.status-section {
+  margin-top: 1rem;
+}
+
+/* Statusi */
+.onHold { font-weight: 700; color: rgb(231, 116, 23); }
+.confirmed { font-weight: 700; color: rgb(9, 201, 31); }
+.declined { font-weight: 700; color: rgba(255, 0, 0, 0.711); }

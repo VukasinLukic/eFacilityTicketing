@@ -1,0 +1,54 @@
+<div class="form-page-container">
+  <div class="form-container">
+    <form [formGroup]="newCarForm" (ngSubmit)="addCar()">
+      <h1>Dodaj Novo Vozilo</h1>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="licensePlate">Registarska oznaka</label>
+          <input type="text" id="licensePlate" formControlName="licensePlate" placeholder="Npr. BG-123-TX" />
+        </div>
+        <div class="form-group">
+          <label for="year">Godište</label>
+          <input type="text" id="year" formControlName="year" placeholder="Npr. 2022" />
+        </div>
+        <div class="form-group">
+          <label for="pricePerDay">Price</label>
+          <input type="text" id="pricePerDay" formControlName="pricePerDay" placeholder="50" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="transmission">Menjač</label>
+          <select id="transmission" formControlName="transmission">
+            <option value="manuelni">Manuelni</option>
+            <option value="automatik">Automatik</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="carModel">Model vozila</label>
+          <select id="carModel" formControlName="carModel">
+            <option [ngValue]="null" disabled>Izaberite model</option>
+            <option *ngFor="let model of carModels" [ngValue]="model">{{ model.name }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="notes">Napomene</label>
+          <textarea id="notes" formControlName="notes" placeholder="Dodatne informacije..."></textarea>
+        </div>
+        <div class="form-group">
+          <label for="picture">URL Slike</label>
+          <input type="text" id="picture" formControlName="picture" placeholder="Unesite URL slike" />
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button type="submit" class="button" [disabled]="newCarForm.invalid">Dodaj Vozilo</button>
+      </div>
+    </form>
+  </div>
+</div>

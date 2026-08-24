@@ -1,0 +1,21 @@
+<div class="card-container">
+  <div class="info-section">
+    <h4><b>JMBG:</b> {{ client.jmbg }}</h4>
+    <h4><b>Ime:</b> {{ client.name }}</h4>
+    <h4><b>Prezime:</b> {{ client.surname }}</h4>
+    <h4><b>Broj Godina:</b> {{ client.age }}</h4>
+    <h4><b>Grad:</b> {{ client.city.name }}</h4>
+    <h4><b>Telefon:</b> {{ client.mobile }}</h4>
+    <div class="buttons">
+      <button class="button" (click)="update()">Izmeni</button>
+      <button class="button" (click)="delete(client)">Obriši</button>
+    </div>
+  </div>
+
+  <app-client-update-modal
+    *ngIf="edit"
+    [client]="client"
+    (saveClient)="onSave($event)"
+    (closeModal)="edit = false"
+    ></app-client-update-modal>
+</div>
