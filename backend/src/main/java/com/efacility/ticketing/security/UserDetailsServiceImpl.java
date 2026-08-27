@@ -1,6 +1,6 @@
 package com.efacility.ticketing.security;
 
-import com.efacility.ticketing.repository.UserRepository;
+import com.efacility.ticketing.repository.KorisnikRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final KorisnikRepository userRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public UserDetailsServiceImpl(KorisnikRepository userRepository) {
         this.userRepository = userRepository;
     }
 

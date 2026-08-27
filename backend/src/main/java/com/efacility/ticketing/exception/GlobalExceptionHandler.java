@@ -69,8 +69,8 @@ public class GlobalExceptionHandler {
                 .body(HttpResponse.getResponse(ex.getMessage(), HttpStatus.BAD_REQUEST));
     }
 
-    @ExceptionHandler(TicketAccessDeniedException.class)
-    public ResponseEntity<Response> handleTicketAccessDenied(TicketAccessDeniedException ex) {
+    @ExceptionHandler(TiketAccessDeniedException.class)
+    public ResponseEntity<Response> handleTiketAccessDenied(TiketAccessDeniedException ex) {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(HttpResponse.getResponse(ex.getMessage(), HttpStatus.FORBIDDEN));

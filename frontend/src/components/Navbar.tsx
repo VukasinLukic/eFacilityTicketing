@@ -29,7 +29,7 @@ export default function Navbar() {
               isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
             }
           >
-            Tickets
+            Tikets
           </NavLink>
           {user?.role === 'TENANT' && (
             <NavLink
@@ -38,7 +38,7 @@ export default function Navbar() {
                 isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
               }
             >
-              New Ticket
+              New Tiket
             </NavLink>
           )}
           {user?.role === 'MANAGER' && (
@@ -48,7 +48,7 @@ export default function Navbar() {
                 isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
               }
             >
-              Buildings
+              Zgradas
             </NavLink>
           )}
         </div>

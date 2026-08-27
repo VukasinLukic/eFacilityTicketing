@@ -11,7 +11,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-function loadUser(): AuthResponse | null {
+function loadKorisnik(): AuthResponse | null {
   try {
     const raw = localStorage.getItem('user');
     return raw ? (JSON.parse(raw) as AuthResponse) : null;
@@ -21,21 +21,21 @@ function loadUser(): AuthResponse | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthResponse | null>(loadUser);
+  const [user, setKorisnik] = useState<AuthResponse | null>(loadKorisnik);
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'));
 
   const login = useCallback((data: AuthResponse) => {
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data));
     setToken(data.token);
-    setUser(data);
+    setKorisnik(data);
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setToken(null);
-    setUser(null);
+    setKorisnik(null);
   }, []);
 
   return (

@@ -1,14 +1,14 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import type { Role } from '../types/user.types';
+import type { Uloga } from '../types/korisnik.types';
 
 interface RoleRouteProps {
-  allowedRoles: Role[];
+  allowedUlogas: Uloga[];
 }
 
-export default function RoleRoute({ allowedRoles }: RoleRouteProps) {
+export default function RoleRoute({ allowedUlogas }: RoleRouteProps) {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
-  if (!allowedRoles.includes(user.role)) return <Navigate to="/dashboard" replace />;
+  if (!allowedUlogas.includes(user.role)) return <Navigate to="/dashboard" replace />;
   return <Outlet />;
 }

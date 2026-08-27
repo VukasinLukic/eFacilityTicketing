@@ -1,12 +1,15 @@
 # Dependencies
 node_modules/
 frontend/node_modules/
+_backup_pre_srpski_rename/
+.tools/
 
 # Build output
 dist/
 build/
 frontend/dist/
 backend/target/
+*.tsbuildinfo
 
 # Logs
 *.log

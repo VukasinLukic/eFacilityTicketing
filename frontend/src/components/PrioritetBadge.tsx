@@ -1,0 +1,17 @@
+import type { Prioritet } from '../types/tiket.types';
+
+const config: Record<Prioritet, { label: string; className: string }> = {
+  LOW:    { label: 'Low',    className: 'bg-gray-100 text-gray-600' },
+  MEDIUM: { label: 'Medium', className: 'bg-blue-100 text-blue-700' },
+  HIGH:   { label: 'High',   className: 'bg-orange-100 text-orange-700' },
+  URGENT: { label: 'Urgent', className: 'bg-red-100 text-red-700' },
+};
+
+export default function PrioritetBadge({ priority }: { priority: Prioritet }) {
+  const { label, className } = config[priority];
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${className}`}>
+      {label}
+    </span>
+  );
+}

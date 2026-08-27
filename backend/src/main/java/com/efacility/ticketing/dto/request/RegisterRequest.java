@@ -1,6 +1,6 @@
 package com.efacility.ticketing.dto.request;
 
-import com.efacility.ticketing.model.enums.Role;
+import com.efacility.ticketing.model.enums.Uloga;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,5 +25,5 @@ public class RegisterRequest {
     private String password;
 
     @NotNull
-    private Role role;
+    private Uloga role;
 }

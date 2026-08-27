@@ -1,8 +1,0 @@
-package com.efacility.ticketing.exception;
-
-public class TicketAccessDeniedException extends RuntimeException {
-
-    public TicketAccessDeniedException(String message) {
-        super(message);
-    }
-}

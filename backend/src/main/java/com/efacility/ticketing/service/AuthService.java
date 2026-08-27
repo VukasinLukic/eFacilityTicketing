@@ -5,8 +5,8 @@ import com.efacility.ticketing.dto.request.LoginRequest;
 import com.efacility.ticketing.dto.request.RegisterRequest;
 import com.efacility.ticketing.exception.EmailAlreadyExistsException;
 import com.efacility.ticketing.exception.ResourceNotFoundException;
-import com.efacility.ticketing.model.User;
-import com.efacility.ticketing.repository.UserRepository;
+import com.efacility.ticketing.model.Korisnik;
+import com.efacility.ticketing.repository.KorisnikRepository;
 import com.efacility.ticketing.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,12 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class AuthService {
 
-    private final UserRepository userRepository;
+    private final KorisnikRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthService(UserRepository userRepository,
+    public AuthService(KorisnikRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService,
                        AuthenticationManager authenticationManager) {
@@ -37,14 +37,14 @@ public class AuthService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("Email already in use: " + request.getEmail());
         }
-        User user = new User();
+        Korisnik user = new Korisnik();
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
 
-        User saved = userRepository.save(user);
+        Korisnik saved = userRepository.save(user);
         String token = jwtService.generateToken(saved);
 
         return new AuthResponse(token, saved.getId(), saved.getEmail(), saved.getRole(),
@@ -55,7 +55,7 @@ public class AuthService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
-        User user = userRepository.findByEmail(request.getEmail())
+        Korisnik user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         String token = jwtService.generateToken(user);
 

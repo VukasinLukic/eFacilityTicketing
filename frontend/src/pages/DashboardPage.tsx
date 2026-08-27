@@ -6,9 +6,9 @@ import { dashboardService } from '../api/dashboardService';
 import type { DashboardStatsDTO } from '../types/dashboard.types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { useAuth } from '../context/AuthContext';
-import { ticketService } from '../api/ticketService';
-import type { TicketDTO } from '../types/ticket.types';
-import TicketCard from '../components/TicketCard';
+import { tiketService } from '../api/tiketService';
+import type { TiketDTO } from '../types/tiket.types';
+import TiketCard from '../components/TiketCard';
 
 const STATUS_COLORS: Record<string, string> = {
   Open: '#3b82f6',
@@ -21,24 +21,27 @@ const STATUS_COLORS: Record<string, string> = {
 export default function DashboardPage() {
   const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStatsDTO | null>(null);
-  const [recentTickets, setRecentTickets] = useState<TicketDTO[]>([]);
+  const [recentTikets, setRecentTikets] = useState<TiketDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     async function load() {
       try {
-        let tickets: TicketDTO[] = [];
+        let tickets: TiketDTO[] = [];
         if (user?.role === 'MANAGER') {
-          const [s, t] = await Promise.all([dashboardService.getStats(), ticketService.getAllTickets()]);
+          const [s, t] = await Promise.all([
+            dashboardService.getStats(),
+            tiketService.getAllTikets({ page: 0, size: 6, sort: 'createdAt,desc' }),
+          ]);
           setStats(s);
-          tickets = t;
+          tickets = t.tickets;
         } else if (user?.role === 'TENANT') {
-          tickets = await ticketService.getMyTickets();
+          tickets = await tiketService.getMyTikets();
         } else if (user?.role === 'TECHNICIAN') {
-          tickets = await ticketService.getAssignedTickets();
+          tickets = await tiketService.getAssignedTikets();
         }
-        setRecentTickets(tickets.slice(0, 6));
+        setRecentTikets(tickets.slice(0, 6));
       } catch {
         setError('Failed to load dashboard data.');
       } finally {
@@ -86,7 +89,7 @@ export default function DashboardPage() {
 
           {/* Bar chart */}
           <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
-            <h2 className="text-sm font-semibold text-gray-700 mb-4">Tickets by Status</h2>
+            <h2 className="text-sm font-semibold text-gray-700 mb-4">Tikets by Status</h2>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -107,14 +110,14 @@ export default function DashboardPage() {
       {/* Recent tickets */}
       <div>
         <h2 className="text-sm font-semibold text-gray-700 mb-3">
-          {user?.role === 'MANAGER' ? 'Recent Tickets' : 'Your Tickets'}
+          {user?.role === 'MANAGER' ? 'Recent Tikets' : 'Your Tikets'}
         </h2>
-        {recentTickets.length === 0 ? (
+        {recentTikets.length === 0 ? (
           <p className="text-sm text-gray-400 italic">No tickets found.</p>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recentTickets.map((t) => (
-              <TicketCard key={t.id} ticket={t} />
+            {recentTikets.map((t) => (
+              <TiketCard key={t.id} ticket={t} />
             ))}
           </div>
         )}

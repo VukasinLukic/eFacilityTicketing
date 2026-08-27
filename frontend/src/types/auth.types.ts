@@ -1,11 +1,11 @@
-import type { Role } from './user.types';
+import type { Uloga } from './korisnik.types';
 
 export interface RegisterRequest {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  role: Role;
+  role: Uloga;
 }
 
 export interface LoginRequest {
@@ -17,7 +17,7 @@ export interface AuthResponse {
   token: string;
   userId: number;
   email: string;
-  role: Role;
+  role: Uloga;
   firstName: string;
   lastName: string;
 }

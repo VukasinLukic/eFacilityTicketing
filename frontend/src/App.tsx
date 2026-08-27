@@ -8,10 +8,10 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import NotFoundPage from './pages/NotFoundPage';
 import DashboardPage from './pages/DashboardPage';
-import TicketListPage from './pages/TicketListPage';
-import TicketDetailPage from './pages/TicketDetailPage';
-import CreateTicketPage from './pages/CreateTicketPage';
-import BuildingsPage from './pages/BuildingsPage';
+import TiketListPage from './pages/TiketListPage';
+import TiketDetailPage from './pages/TiketDetailPage';
+import CreateTiketPage from './pages/CreateTiketPage';
+import ZgradePage from './pages/ZgradePage';
 
 export default function App() {
   return (
@@ -27,17 +27,17 @@ export default function App() {
             <Route element={<PrivateRoute />}>
               <Route element={<Layout />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/tickets" element={<TicketListPage />} />
-                <Route path="/tickets/:id" element={<TicketDetailPage />} />
+                <Route path="/tickets" element={<TiketListPage />} />
+                <Route path="/tickets/:id" element={<TiketDetailPage />} />
 
                 {/* Tenant only */}
-                <Route element={<RoleRoute allowedRoles={['TENANT']} />}>
-                  <Route path="/tickets/create" element={<CreateTicketPage />} />
+                <Route element={<RoleRoute allowedUlogas={['TENANT']} />}>
+                  <Route path="/tickets/create" element={<CreateTiketPage />} />
                 </Route>
 
                 {/* Manager only */}
-                <Route element={<RoleRoute allowedRoles={['MANAGER']} />}>
-                  <Route path="/buildings" element={<BuildingsPage />} />
+                <Route element={<RoleRoute allowedUlogas={['MANAGER']} />}>
+                  <Route path="/buildings" element={<ZgradePage />} />
                 </Route>
               </Route>
             </Route>

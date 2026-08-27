@@ -32,7 +32,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">eFacility Ticketing</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">eFacility Tiketing</h1>
         <h2 className="text-lg font-semibold mb-4 text-gray-700">Sign In</h2>
         {error && (
           <div className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 p-3 rounded">

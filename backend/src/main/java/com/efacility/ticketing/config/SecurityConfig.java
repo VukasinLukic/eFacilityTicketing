@@ -45,32 +45,36 @@ public class SecurityConfig {
                         // Javni endpointi — bez tokena
                         .requestMatchers("/auth/**").permitAll()
 
-                        // --- Buildings ---
+                        // --- Zgradas ---
                         .requestMatchers(HttpMethod.GET, "/buildings/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/buildings/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/buildings/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/buildings/**").hasRole("MANAGER")
 
-                        // --- Apartments ---
+                        // --- Stans ---
                         .requestMatchers(HttpMethod.GET, "/apartments/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/apartments/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/apartments/**").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/apartments/**").hasRole("MANAGER")
 
-                        // --- Tickets ---
+                        // --- Tikets ---
                         .requestMatchers(HttpMethod.POST, "/tickets/create").hasRole("TENANT")
                         .requestMatchers(HttpMethod.GET, "/tickets/my").hasRole("TENANT")
                         .requestMatchers(HttpMethod.GET, "/tickets/all").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.POST, "/tickets/assign").hasRole("MANAGER")
-                        .requestMatchers(HttpMethod.POST, "/tickets/updatePriority").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/tickets/assign").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/tickets/updatePriority").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.GET, "/tickets/assigned").hasRole("TECHNICIAN")
-                        .requestMatchers(HttpMethod.POST, "/tickets/updateStatus").hasAnyRole("MANAGER", "TECHNICIAN")
+                        .requestMatchers(HttpMethod.PUT, "/tickets/updateStatus").hasAnyRole("MANAGER", "TECHNICIAN")
                         .requestMatchers(HttpMethod.GET, "/tickets/{id}").authenticated()
 
-                        // --- Comments & History ---
+                        // --- Komentars & History ---
                         .requestMatchers("/comments/**").authenticated()
                         .requestMatchers("/ticket-history/**").authenticated()
 
                         // --- Dashboard ---
                         .requestMatchers("/dashboard/**").hasRole("MANAGER")
 
-                        // --- Users ---
+                        // --- Korisniks ---
                         .requestMatchers(HttpMethod.GET, "/users/technicians").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.GET, "/users/me").authenticated()
 
