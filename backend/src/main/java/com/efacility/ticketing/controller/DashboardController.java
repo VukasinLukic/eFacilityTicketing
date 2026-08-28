@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/dashboard")
-@CrossOrigin("http://localhost:3000")
 public class DashboardController {
 
     private final DashboardService dashboardService;
@@ -25,7 +24,7 @@ public class DashboardController {
     public ResponseEntity<Response> getStats() {
         DashboardStatsDTO stats = dashboardService.getStats();
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Stats fetched", Map.of("stats", stats), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Statistika je učitana.", Map.of("stats", stats), HttpStatus.OK)
         );
     }
 }

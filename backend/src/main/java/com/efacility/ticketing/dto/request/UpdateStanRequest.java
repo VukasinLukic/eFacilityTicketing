@@ -7,15 +7,15 @@ import lombok.Data;
 @Data
 public class UpdateStanRequest {
 
-    @NotNull
+    @NotNull(message = "Id stana je obavezan")
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Broj stana je obavezan")
     private String number;
 
-    @NotNull
+    @NotNull(message = "Sprat je obavezan")
     private Integer floor;
 
-    @NotNull
+    @NotNull(message = "Zgrada je obavezna")
     private Long buildingId;
 }

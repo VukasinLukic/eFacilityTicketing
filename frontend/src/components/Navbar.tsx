@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { ROLE_LABELS } from '../utils/labels';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -21,7 +22,7 @@ export default function Navbar() {
               isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
             }
           >
-            Dashboard
+            Kontrolna tabla
           </NavLink>
           <NavLink
             to="/tickets"
@@ -29,7 +30,7 @@ export default function Navbar() {
               isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
             }
           >
-            Tikets
+            Tiketi
           </NavLink>
           {user?.role === 'TENANT' && (
             <NavLink
@@ -38,7 +39,7 @@ export default function Navbar() {
                 isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
               }
             >
-              New Tiket
+              Novi tiket
             </NavLink>
           )}
           {user?.role === 'MANAGER' && (
@@ -48,7 +49,7 @@ export default function Navbar() {
                 isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
               }
             >
-              Zgradas
+              Zgrade
             </NavLink>
           )}
         </div>
@@ -56,13 +57,15 @@ export default function Navbar() {
       <div className="flex items-center gap-3 text-sm">
         <span className="text-gray-500">
           {user?.firstName} {user?.lastName}
-          <span className="ml-1 text-xs text-gray-400">({user?.role})</span>
+          <span className="ml-1 text-xs text-gray-400">
+            ({user?.role ? ROLE_LABELS[user.role] : ''})
+          </span>
         </span>
         <button
           onClick={handleLogout}
           className="text-red-500 hover:text-red-700 font-medium transition-colors"
         >
-          Logout
+          Odjava
         </button>
       </div>
     </nav>

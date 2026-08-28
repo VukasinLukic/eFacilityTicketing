@@ -14,17 +14,14 @@ export default function ZgradePage() {
   const [buildings, setZgradas] = useState<ZgradaDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Zgrada form
   const [showZgradaForm, setShowZgradaForm] = useState(false);
   const [editingZgrada, setEditingZgrada] = useState<ZgradaDTO | null>(null);
   const [buildingForm, setZgradaForm] = useState<ZgradaFormState>({ name: '', address: '' });
   const [buildingLoading, setZgradaLoading] = useState(false);
 
-  // Expanded building apartments
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [apartmentsMap, setStansMap] = useState<Record<number, StanDTO[]>>({});
 
-  // Stan form
   const [showStanForm, setShowStanForm] = useState<number | null>(null);
   const [editingStan, setEditingStan] = useState<StanDTO | null>(null);
   const [aptForm, setAptForm] = useState<AptFormState>({ number: '', floor: '' });
@@ -33,7 +30,7 @@ export default function ZgradePage() {
   useEffect(() => {
     zgradaService.getAll()
       .then(setZgradas)
-      .catch((err) => showToast(getErrorMessage(err, 'Failed to load buildings.'), 'error'))
+      .catch((err) => showToast(getErrorMessage(err, 'Učitavanje zgrada nije uspelo.'), 'error'))
       .finally(() => setLoading(false));
   }, [showToast]);
 
@@ -45,7 +42,7 @@ export default function ZgradePage() {
         const apts = await zgradaService.getStansByZgrada(buildingId);
         setStansMap((prev) => ({ ...prev, [buildingId]: apts }));
       } catch (err) {
-        showToast(getErrorMessage(err, 'Failed to load apartments.'), 'error');
+        showToast(getErrorMessage(err, 'Učitavanje stanova nije uspelo.'), 'error');
       }
     }
   }
@@ -69,29 +66,29 @@ export default function ZgradePage() {
       if (editingZgrada) {
         const updated = await zgradaService.updateZgrada({ id: editingZgrada.id, ...buildingForm });
         setZgradas((prev) => prev.map((b) => (b.id === updated.id ? updated : b)));
-        showToast('Building updated.', 'success');
+        showToast('Zgrada je uspešno ažurirana!', 'success');
       } else {
         const created = await zgradaService.addZgrada(buildingForm);
         setZgradas((prev) => [...prev, created]);
-        showToast('Building added.', 'success');
+        showToast('Zgrada je uspešno dodata!', 'success');
       }
       setShowZgradaForm(false);
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to save building.'), 'error');
+      showToast(getErrorMessage(err, 'Čuvanje zgrade nije uspelo.'), 'error');
     } finally {
       setZgradaLoading(false);
     }
   }
 
   async function handleDeleteZgrada(id: number) {
-    if (!confirm('Delete this building? This will also remove all its apartments.')) return;
+    if (!confirm('Obrisati ovu zgradu i sve njene stanove? Moguće je samo ako nijedan stan nema tikete.')) return;
     try {
       await zgradaService.deleteZgrada(id);
       setZgradas((prev) => prev.filter((b) => b.id !== id));
       if (expandedId === id) setExpandedId(null);
-      showToast('Building deleted.', 'success');
+      showToast('Zgrada je uspešno obrisana!', 'success');
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to delete building.'), 'error');
+      showToast(getErrorMessage(err, 'Brisanje zgrade nije uspelo.'), 'error');
     }
   }
 
@@ -122,7 +119,7 @@ export default function ZgradePage() {
           ...prev,
           [buildingId]: (prev[buildingId] ?? []).map((a) => (a.id === updated.id ? updated : a)),
         }));
-        showToast('Apartment updated.', 'success');
+        showToast('Stan je uspešno ažuriran!', 'success');
       } else {
         const created = await zgradaService.addStan({
           number: aptForm.number.trim(),
@@ -133,27 +130,27 @@ export default function ZgradePage() {
           ...prev,
           [buildingId]: [...(prev[buildingId] ?? []), created],
         }));
-        showToast('Apartment added.', 'success');
+        showToast('Stan je uspešno dodat!', 'success');
       }
       setShowStanForm(null);
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to save apartment.'), 'error');
+      showToast(getErrorMessage(err, 'Čuvanje stana nije uspelo.'), 'error');
     } finally {
       setAptLoading(false);
     }
   }
 
   async function handleDeleteStan(apt: StanDTO) {
-    if (!confirm(`Delete apartment ${apt.number}?`)) return;
+    if (!confirm(`Obrisati stan ${apt.number}? Moguće je samo ako za njega nema prijavljenih tiketa.`)) return;
     try {
       await zgradaService.deleteStan(apt.id);
       setStansMap((prev) => ({
         ...prev,
         [apt.building.id]: (prev[apt.building.id] ?? []).filter((a) => a.id !== apt.id),
       }));
-      showToast('Apartment deleted.', 'success');
+      showToast('Stan je uspešno obrisan!', 'success');
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to delete apartment.'), 'error');
+      showToast(getErrorMessage(err, 'Brisanje stana nije uspelo.'), 'error');
     }
   }
 
@@ -162,40 +159,39 @@ export default function ZgradePage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Zgradas</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Zgrade</h1>
         <button
           onClick={openAddZgrada}
           className="px-4 py-2 bg-blue-600 text-white text-sm rounded font-medium hover:bg-blue-700 transition-colors"
         >
-          + Add Building
+          + Dodaj zgradu
         </button>
       </div>
 
-      {/* Zgrada form modal */}
       {showZgradaForm && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              {editingZgrada ? 'Edit Building' : 'Add Building'}
+              {editingZgrada ? 'Izmena zgrade' : 'Nova zgrada'}
             </h2>
             <div className="space-y-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Naziv</label>
                 <input
                   type="text"
                   value={buildingForm.name}
                   onChange={(e) => setZgradaForm((f) => ({ ...f, name: e.target.value }))}
-                  placeholder="e.g. Sunrise Tower"
+                  placeholder="npr. Zgrada Sunce"
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Adresa</label>
                 <input
                   type="text"
                   value={buildingForm.address}
                   onChange={(e) => setZgradaForm((f) => ({ ...f, address: e.target.value }))}
-                  placeholder="e.g. 123 Main St, Belgrade"
+                  placeholder="npr. Bulevar kralja Aleksandra 73, Beograd"
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -205,14 +201,14 @@ export default function ZgradePage() {
                 onClick={() => setShowZgradaForm(false)}
                 className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors"
               >
-                Cancel
+                Odustani
               </button>
               <button
                 onClick={handleZgradaSubmit}
                 disabled={buildingLoading || !buildingForm.name.trim() || !buildingForm.address.trim()}
                 className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
-                {buildingLoading ? 'Saving...' : 'Save'}
+                {buildingLoading ? 'Čuvanje...' : 'Sačuvaj'}
               </button>
             </div>
           </div>
@@ -221,8 +217,8 @@ export default function ZgradePage() {
 
       {buildings.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
-          <p className="text-lg mb-2">No buildings yet.</p>
-          <p className="text-sm">Click "Add Building" to get started.</p>
+          <p className="text-lg mb-2">Još nema unetih zgrada.</p>
+          <p className="text-sm">Kliknite „Dodaj zgradu“ da započnete.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -247,7 +243,7 @@ export default function ZgradePage() {
                     onClick={(e) => { e.stopPropagation(); handleDeleteZgrada(b.id); }}
                     className="text-xs text-red-500 hover:underline"
                   >
-                    Delete
+                    Obriši
                   </button>
                   <span className="text-gray-400 text-xs ml-1">{expandedId === b.id ? '▲' : '▼'}</span>
                 </div>
@@ -261,15 +257,14 @@ export default function ZgradePage() {
                       onClick={() => openAddStan(b.id)}
                       className="text-xs text-blue-600 hover:underline font-medium"
                     >
-                      + Add Stan
+                      + Dodaj stan
                     </button>
                   </div>
 
-                  {/* Stan inline form */}
                   {showStanForm === b.id && (
                     <div className="bg-blue-50 rounded-lg p-4 mb-4 border border-blue-100">
                       <h5 className="text-sm font-medium text-gray-700 mb-3">
-                        {editingStan ? 'Edit Apartment' : 'New Apartment'}
+                        {editingStan ? 'Izmena stana' : 'Novi stan'}
                       </h5>
                       <div className="grid grid-cols-2 gap-3 mb-3">
                         <div>
@@ -278,18 +273,18 @@ export default function ZgradePage() {
                             type="text"
                             value={aptForm.number}
                             onChange={(e) => setAptForm((f) => ({ ...f, number: e.target.value }))}
-                            placeholder="e.g. 4B"
+                            placeholder="npr. 4B"
                             className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">Floor</label>
+                          <label className="block text-xs text-gray-600 mb-1">Sprat</label>
                           <input
                             type="number"
                             value={aptForm.floor}
                             onChange={(e) => setAptForm((f) => ({ ...f, floor: e.target.value }))}
                             min={0}
-                            placeholder="e.g. 3"
+                            placeholder="npr. 3"
                             className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div>
@@ -300,22 +295,22 @@ export default function ZgradePage() {
                           disabled={aptLoading || !aptForm.number.trim() || !aptForm.floor}
                           className="px-3 py-1.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
                         >
-                          {aptLoading ? 'Saving...' : 'Save'}
+                          {aptLoading ? 'Čuvanje...' : 'Sačuvaj'}
                         </button>
                         <button
                           onClick={() => setShowStanForm(null)}
                           className="px-3 py-1.5 text-xs border border-gray-300 rounded hover:bg-gray-100 transition-colors"
                         >
-                          Cancel
+                          Odustani
                         </button>
                       </div>
                     </div>
                   )}
 
                   {!(apartmentsMap[b.id]) ? (
-                    <p className="text-xs text-gray-400">Loading apartments...</p>
+                    <p className="text-xs text-gray-400">Učitavanje stanova...</p>
                   ) : apartmentsMap[b.id].length === 0 ? (
-                    <p className="text-xs text-gray-400 italic">No apartments in this building.</p>
+                    <p className="text-xs text-gray-400 italic">Ova zgrada nema unetih stanova.</p>
                   ) : (
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
                       {apartmentsMap[b.id].map((a) => (

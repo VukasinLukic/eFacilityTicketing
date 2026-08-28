@@ -9,13 +9,14 @@ import { useAuth } from '../context/AuthContext';
 import { tiketService } from '../api/tiketService';
 import type { TiketDTO } from '../types/tiket.types';
 import TiketCard from '../components/TiketCard';
+import { STATUS_LABELS } from '../utils/labels';
 
 const STATUS_COLORS: Record<string, string> = {
-  Open: '#3b82f6',
-  Assigned: '#8b5cf6',
-  'In Progress': '#f59e0b',
-  Completed: '#10b981',
-  Closed: '#6b7280',
+  OPEN: '#3b82f6',
+  ASSIGNED: '#8b5cf6',
+  IN_PROGRESS: '#f59e0b',
+  COMPLETED: '#10b981',
+  CLOSED: '#6b7280',
 };
 
 export default function DashboardPage() {
@@ -43,7 +44,7 @@ export default function DashboardPage() {
         }
         setRecentTikets(tickets.slice(0, 6));
       } catch {
-        setError('Failed to load dashboard data.');
+        setError('Učitavanje podataka za kontrolnu tablu nije uspelo.');
       } finally {
         setLoading(false);
       }
@@ -56,29 +57,28 @@ export default function DashboardPage() {
 
   const chartData = stats
     ? [
-        { name: 'Open', value: stats.openCount },
-        { name: 'Assigned', value: stats.assignedCount },
-        { name: 'In Progress', value: stats.inProgressCount },
-        { name: 'Completed', value: stats.completedCount },
-        { name: 'Closed', value: stats.closedCount },
+        { key: 'OPEN', name: STATUS_LABELS.OPEN, value: stats.openCount },
+        { key: 'ASSIGNED', name: STATUS_LABELS.ASSIGNED, value: stats.assignedCount },
+        { key: 'IN_PROGRESS', name: STATUS_LABELS.IN_PROGRESS, value: stats.inProgressCount },
+        { key: 'COMPLETED', name: STATUS_LABELS.COMPLETED, value: stats.completedCount },
+        { key: 'CLOSED', name: STATUS_LABELS.CLOSED, value: stats.closedCount },
       ]
     : [];
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Kontrolna tabla</h1>
 
       {stats && (
         <>
-          {/* Stat cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
             {[
-              { label: 'Total', value: stats.totalCount, color: 'bg-gray-50 border-gray-200' },
-              { label: 'Open', value: stats.openCount, color: 'bg-blue-50 border-blue-200' },
-              { label: 'Assigned', value: stats.assignedCount, color: 'bg-purple-50 border-purple-200' },
-              { label: 'In Progress', value: stats.inProgressCount, color: 'bg-yellow-50 border-yellow-200' },
-              { label: 'Completed', value: stats.completedCount, color: 'bg-green-50 border-green-200' },
-              { label: 'Closed', value: stats.closedCount, color: 'bg-gray-50 border-gray-300' },
+              { label: 'Ukupno', value: stats.totalCount, color: 'bg-gray-50 border-gray-200' },
+              { label: STATUS_LABELS.OPEN, value: stats.openCount, color: 'bg-blue-50 border-blue-200' },
+              { label: STATUS_LABELS.ASSIGNED, value: stats.assignedCount, color: 'bg-purple-50 border-purple-200' },
+              { label: STATUS_LABELS.IN_PROGRESS, value: stats.inProgressCount, color: 'bg-yellow-50 border-yellow-200' },
+              { label: STATUS_LABELS.COMPLETED, value: stats.completedCount, color: 'bg-green-50 border-green-200' },
+              { label: STATUS_LABELS.CLOSED, value: stats.closedCount, color: 'bg-gray-50 border-gray-300' },
             ].map((s) => (
               <div key={s.label} className={`rounded-lg border p-4 text-center ${s.color}`}>
                 <div className="text-2xl font-bold text-gray-800">{s.value}</div>
@@ -87,9 +87,8 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          {/* Bar chart */}
           <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8">
-            <h2 className="text-sm font-semibold text-gray-700 mb-4">Tikets by Status</h2>
+            <h2 className="text-sm font-semibold text-gray-700 mb-4">Tiketi po statusu</h2>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -98,7 +97,7 @@ export default function DashboardPage() {
                 <Tooltip />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                   {chartData.map((entry) => (
-                    <Cell key={entry.name} fill={STATUS_COLORS[entry.name] ?? '#6b7280'} />
+                    <Cell key={entry.key} fill={STATUS_COLORS[entry.key] ?? '#6b7280'} />
                   ))}
                 </Bar>
               </BarChart>
@@ -107,13 +106,12 @@ export default function DashboardPage() {
         </>
       )}
 
-      {/* Recent tickets */}
       <div>
         <h2 className="text-sm font-semibold text-gray-700 mb-3">
-          {user?.role === 'MANAGER' ? 'Recent Tikets' : 'Your Tikets'}
+          {user?.role === 'MANAGER' ? 'Najnoviji tiketi' : 'Vaši tiketi'}
         </h2>
         {recentTikets.length === 0 ? (
-          <p className="text-sm text-gray-400 italic">No tickets found.</p>
+          <p className="text-sm text-gray-400 italic">Nema tiketa.</p>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentTikets.map((t) => (

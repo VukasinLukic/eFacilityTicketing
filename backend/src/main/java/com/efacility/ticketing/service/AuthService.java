@@ -35,7 +35,7 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new EmailAlreadyExistsException("Email already in use: " + request.getEmail());
+            throw new EmailAlreadyExistsException("Nalog sa ovom e-mail adresom već postoji: " + request.getEmail());
         }
         Korisnik user = new Korisnik();
         user.setFirstName(request.getFirstName());
@@ -56,7 +56,7 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
         Korisnik user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Korisnik nije pronađen!"));
         String token = jwtService.generateToken(user);
 
         return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole(),

@@ -15,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin("http://localhost:3000")
 public class KorisnikController {
 
     private final KorisnikService korisnikService;
@@ -28,7 +27,7 @@ public class KorisnikController {
     public ResponseEntity<Response> getMe(@AuthenticationPrincipal Korisnik currentKorisnik) {
         KorisnikDTO user = korisnikService.getCurrentKorisnik(currentKorisnik);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("User fetched", Map.of("user", user), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Korisnik je učitan.", Map.of("user", user), HttpStatus.OK)
         );
     }
 
@@ -36,7 +35,7 @@ public class KorisnikController {
     public ResponseEntity<Response> getTechnicians() {
         List<KorisnikDTO> technicians = korisnikService.getAllTechnicians();
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Technicians fetched", Map.of("technicians", technicians), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Tehničari su učitani.", Map.of("technicians", technicians), HttpStatus.OK)
         );
     }
 }

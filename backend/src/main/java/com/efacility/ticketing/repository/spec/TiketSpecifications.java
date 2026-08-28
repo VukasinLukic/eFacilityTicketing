@@ -5,11 +5,10 @@ import com.efacility.ticketing.model.enums.Prioritet;
 import com.efacility.ticketing.model.enums.StatusTiketa;
 import org.springframework.data.jpa.domain.Specification;
 
-/**
- * Dinamicko filtriranje/pretraga liste tiketa (status, prioritet, zgrada, kljucna rec u
- * naslovu/opisu). Koristi se u TiketService.getAllTikets(...) preko JpaSpecificationExecutor,
- * u kombinaciji sa Pageable za paginaciju i sortiranje (GET /tickets/all).
- */
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 public class TiketSpecifications {
 
     private TiketSpecifications() {
@@ -17,11 +16,40 @@ public class TiketSpecifications {
 
     public static Specification<Tiket> withFilters(StatusTiketa status, Prioritet priority,
                                                      Long buildingId, String search) {
+        return withFilters(status, priority, buildingId, search, null, null, null);
+    }
+
+    public static Specification<Tiket> withFilters(StatusTiketa status, Prioritet priority,
+                                                     Long buildingId, String search,
+                                                     LocalDate from, LocalDate to,
+                                                     Long technicianId) {
         return Specification
                 .where(hasStatus(status))
                 .and(hasPriority(priority))
                 .and(inBuilding(buildingId))
-                .and(matchesSearch(search));
+                .and(matchesSearch(search))
+                .and(createdBetween(from, to))
+                .and(hasTechnician(technicianId));
+    }
+
+    public static Specification<Tiket> createdBetween(LocalDate from, LocalDate to) {
+        return (root, query, cb) -> {
+            if (from == null && to == null) {
+                return null;
+            }
+            if (from != null && to != null) {
+                return cb.between(root.get("createdAt"), from.atStartOfDay(), to.atTime(LocalTime.MAX));
+            }
+            if (from != null) {
+                return cb.greaterThanOrEqualTo(root.get("createdAt"), from.atStartOfDay());
+            }
+            return cb.lessThanOrEqualTo(root.<LocalDateTime>get("createdAt"), to.atTime(LocalTime.MAX));
+        };
+    }
+
+    public static Specification<Tiket> hasTechnician(Long technicianId) {
+        return (root, query, cb) -> technicianId == null ? null
+                : cb.equal(root.get("technician").get("id"), technicianId);
     }
 
     private static Specification<Tiket> hasStatus(StatusTiketa status) {

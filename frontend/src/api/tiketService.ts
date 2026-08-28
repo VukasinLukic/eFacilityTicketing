@@ -8,13 +8,41 @@ import type {
   UpdatePrioritetRequest,
   TiketListParams,
   TiketPageResponse,
+  TiketExportParams,
 } from '../types/tiket.types';
+import { preuzmiFajl } from '../utils/download';
 
 type TiketsRes = BackendResponse<{ tickets: TiketDTO[] }>;
 type TiketRes = BackendResponse<{ ticket: TiketDTO }>;
 type TiketPageRes = BackendResponse<TiketPageResponse>;
 
+function exportParams(params: TiketExportParams) {
+  return {
+    status: params.status || undefined,
+    priority: params.priority || undefined,
+    buildingId: params.buildingId || undefined,
+    from: params.from || undefined,
+    to: params.to || undefined,
+  };
+}
+
 export const tiketService = {
+  async exportExcel(params: TiketExportParams = {}): Promise<void> {
+    const res = await api.get('/tickets/export/excel', {
+      params: exportParams(params),
+      responseType: 'blob',
+    });
+    preuzmiFajl(res.data as Blob, 'tiketi.xlsx', res.headers['content-disposition']);
+  },
+
+  async exportPdf(params: TiketExportParams = {}): Promise<void> {
+    const res = await api.get('/tickets/export/pdf', {
+      params: exportParams(params),
+      responseType: 'blob',
+    });
+    preuzmiFajl(res.data as Blob, 'tiketi.pdf', res.headers['content-disposition']);
+  },
+
   async getAllTikets(params: TiketListParams = {}): Promise<TiketPageResponse> {
     const { page = 0, size = 10, sort = 'createdAt,desc', status, priority, buildingId, search } = params;
     const res = await api.get<TiketPageRes>('/tickets/all', {

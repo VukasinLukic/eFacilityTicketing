@@ -57,3 +57,11 @@ export interface TiketPageResponse {
   currentPage: number;
   pageSize: number;
 }
+
+export interface TiketExportParams {
+  status?: StatusTiketa | '';
+  priority?: Prioritet | '';
+  buildingId?: number;
+  from?: string;
+  to?: string;
+}

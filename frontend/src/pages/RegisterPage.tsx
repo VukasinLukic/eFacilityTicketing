@@ -21,7 +21,7 @@ export default function RegisterPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      setError('Lozinka mora imati najmanje 6 karaktera.');
       return;
     }
     setError('');
@@ -31,7 +31,7 @@ export default function RegisterPage() {
       login(data);
       navigate('/dashboard');
     } catch (err) {
-      setError(getErrorMessage(err, 'Registration failed. Email may already be in use.'));
+      setError(getErrorMessage(err, 'Registracija nije uspela. E-mail adresa je možda već u upotrebi.'));
     } finally {
       setLoading(false);
     }
@@ -41,7 +41,7 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">eFacility Tiketing</h1>
-        <h2 className="text-lg font-semibold mb-4 text-gray-700">Create Account</h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-700">Otvaranje naloga</h2>
         {error && (
           <div className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 p-3 rounded">
             {error}
@@ -50,7 +50,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Ime</label>
               <input
                 type="text"
                 value={firstName}
@@ -60,7 +60,7 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Prezime</label>
               <input
                 type="text"
                 value={lastName}
@@ -71,7 +71,7 @@ export default function RegisterPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
             <input
               type="email"
               value={email}
@@ -82,7 +82,7 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Lozinka</label>
             <input
               type="password"
               value={password}
@@ -92,7 +92,7 @@ export default function RegisterPage() {
               autoComplete="new-password"
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <p className="mt-1 text-xs text-gray-400">Minimum 6 characters</p>
+            <p className="mt-1 text-xs text-gray-400">Najmanje 6 karaktera</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Uloga</label>
@@ -101,9 +101,9 @@ export default function RegisterPage() {
               onChange={(e) => setUloga(e.target.value as Uloga)}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="TENANT">Tenant</option>
-              <option value="MANAGER">Manager</option>
-              <option value="TECHNICIAN">Technician</option>
+              <option value="TENANT">Stanar</option>
+              <option value="MANAGER">Menadžer</option>
+              <option value="TECHNICIAN">Tehničar</option>
             </select>
           </div>
           <button
@@ -111,12 +111,12 @@ export default function RegisterPage() {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-2 rounded font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {loading ? 'Creating account...' : 'Register'}
+            {loading ? 'Otvaranje naloga...' : 'Registruj se'}
           </button>
         </form>
         <p className="mt-4 text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 hover:underline font-medium">Sign In</Link>
+          Već imate nalog?{' '}
+          <Link to="/login" className="text-blue-600 hover:underline font-medium">Prijavite se</Link>
         </p>
       </div>
     </div>

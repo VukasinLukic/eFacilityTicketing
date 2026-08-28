@@ -18,7 +18,7 @@ export default function DodeliTehnicaraModal({ ticket, onClose, onAssigned }: Pr
   const [error, setError] = useState('');
 
   useEffect(() => {
-    korisnikService.getTechnicians().then(setTechnicians).catch((err) => setError(getErrorMessage(err, 'Failed to load technicians.')));
+    korisnikService.getTechnicians().then(setTechnicians).catch((err) => setError(getErrorMessage(err, 'Učitavanje tehničara nije uspelo.')));
   }, []);
 
   async function handleAssign() {
@@ -29,7 +29,7 @@ export default function DodeliTehnicaraModal({ ticket, onClose, onAssigned }: Pr
       const updated = await tiketService.assignTechnician({ ticketId: ticket.id, technicianId: selectedId });
       onAssigned(updated);
     } catch (err) {
-      setError(getErrorMessage(err, 'Failed to assign technician.'));
+      setError(getErrorMessage(err, 'Dodela tehničara nije uspela.'));
     } finally {
       setLoading(false);
     }
@@ -38,16 +38,16 @@ export default function DodeliTehnicaraModal({ ticket, onClose, onAssigned }: Pr
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Assign Technician</h2>
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Dodela tehničara</h2>
         {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Select Technician</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Izaberite tehničara</label>
           <select
             value={selectedId}
             onChange={(e) => setSelectedId(Number(e.target.value))}
             className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="">-- Choose technician --</option>
+            <option value="">-- Izaberite tehničara --</option>
             {technicians.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.firstName} {t.lastName} ({t.email})
@@ -60,14 +60,14 @@ export default function DodeliTehnicaraModal({ ticket, onClose, onAssigned }: Pr
             onClick={onClose}
             className="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
           >
-            Cancel
+            Odustani
           </button>
           <button
             onClick={handleAssign}
             disabled={!selectedId || loading}
             className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {loading ? 'Assigning...' : 'Assign'}
+            {loading ? 'Dodeljivanje...' : 'Dodeli'}
           </button>
         </div>
       </div>

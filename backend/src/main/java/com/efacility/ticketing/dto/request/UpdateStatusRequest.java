@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class UpdateStatusRequest {
 
-    @NotNull
+    @NotNull(message = "Id tiketa je obavezan")
     private Long ticketId;
 
-    @NotNull
+    @NotNull(message = "Novi status je obavezan")
     private StatusTiketa newStatus;
 }

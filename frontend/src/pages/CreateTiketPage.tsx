@@ -6,6 +6,7 @@ import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errorUtils';
 import type { StanDTO } from '../types/stan.types';
 import type { Prioritet } from '../types/tiket.types';
+import { PRIORITY_LABELS } from '../utils/labels';
 
 const PRIORITIES: Prioritet[] = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
 
@@ -23,18 +24,18 @@ export default function CreateTiketPage() {
   useEffect(() => {
     zgradaService.getAllStans()
       .then(setStans)
-      .catch(() => setAptsError('Could not load apartments. Please try again.'));
+      .catch(() => setAptsError('Učitavanje stanova nije uspelo. Pokušajte ponovo.'));
   }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!apartmentId) return;
     if (title.trim().length < 5) {
-      showToast('Title must be at least 5 characters.', 'error');
+      showToast('Naslov mora imati najmanje 5 karaktera.', 'error');
       return;
     }
     if (description.trim().length < 10) {
-      showToast('Description must be at least 10 characters.', 'error');
+      showToast('Opis mora imati najmanje 10 karaktera.', 'error');
       return;
     }
     setLoading(true);
@@ -45,10 +46,10 @@ export default function CreateTiketPage() {
         priority,
         apartmentId,
       });
-      showToast('Ticket created successfully!', 'success');
+      showToast('Tiket je uspešno kreiran!', 'success');
       navigate(`/tickets/${ticket.id}`);
     } catch (err) {
-      showToast(getErrorMessage(err, 'Failed to create ticket.'), 'error');
+      showToast(getErrorMessage(err, 'Kreiranje tiketa nije uspelo.'), 'error');
     } finally {
       setLoading(false);
     }
@@ -56,7 +57,7 @@ export default function CreateTiketPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">New Tiket</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Novi tiket</h1>
 
       {aptsError && (
         <div className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 p-3 rounded">
@@ -67,7 +68,7 @@ export default function CreateTiketPage() {
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Naslov</label>
             <input
               type="text"
               value={title}
@@ -75,19 +76,19 @@ export default function CreateTiketPage() {
               required
               minLength={5}
               maxLength={200}
-              placeholder="Brief summary of the issue"
+              placeholder="Kratak opis kvara"
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Opis</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
               minLength={10}
               rows={5}
-              placeholder="Describe the issue in detail — location, what happened, how urgent it is..."
+              placeholder="Opišite kvar detaljno — gde je, šta se desilo, koliko je hitno..."
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>
@@ -100,7 +101,7 @@ export default function CreateTiketPage() {
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 {PRIORITIES.map((p) => (
-                  <option key={p} value={p}>{p}</option>
+                  <option key={p} value={p}>{PRIORITY_LABELS[p]}</option>
                 ))}
               </select>
             </div>
@@ -112,10 +113,10 @@ export default function CreateTiketPage() {
                 required
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">-- Select apartment --</option>
+                <option value="">-- Izaberite stan --</option>
                 {apartments.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.building.name} — Apt {a.number} (Floor {a.floor})
+                    {a.building.name} — stan {a.number} ({a.floor}. sprat)
                   </option>
                 ))}
               </select>
@@ -127,14 +128,14 @@ export default function CreateTiketPage() {
               disabled={loading || !apartmentId}
               className="px-6 py-2 bg-blue-600 text-white text-sm rounded font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
-              {loading ? 'Creating...' : 'Create Ticket'}
+              {loading ? 'Kreiranje...' : 'Kreiraj tiket'}
             </button>
             <button
               type="button"
               onClick={() => navigate('/tickets')}
               className="px-6 py-2 border border-gray-300 text-gray-600 text-sm rounded hover:bg-gray-50 transition-colors"
             >
-              Cancel
+              Odustani
             </button>
           </div>
         </form>

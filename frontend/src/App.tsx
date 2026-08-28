@@ -19,30 +19,25 @@ export default function App() {
       <AuthProvider>
         <ToastProvider>
           <Routes>
-            {/* Public routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
-            {/* Protected routes with layout */}
             <Route element={<PrivateRoute />}>
               <Route element={<Layout />}>
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/tickets" element={<TiketListPage />} />
                 <Route path="/tickets/:id" element={<TiketDetailPage />} />
 
-                {/* Tenant only */}
                 <Route element={<RoleRoute allowedUlogas={['TENANT']} />}>
                   <Route path="/tickets/create" element={<CreateTiketPage />} />
                 </Route>
 
-                {/* Manager only */}
                 <Route element={<RoleRoute allowedUlogas={['MANAGER']} />}>
                   <Route path="/buildings" element={<ZgradePage />} />
                 </Route>
               </Route>
             </Route>
 
-            {/* Redirects */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

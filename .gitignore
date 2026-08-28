@@ -2,6 +2,12 @@
 node_modules/
 frontend/node_modules/
 _backup_pre_srpski_rename/
+_backup_pre_kompozicija/
+_backup_pre_srpske_poruke/
+_backup_pre_srpski_ui/
+_backup_pre_audit_fix/
+_backup_pre_mvnw/
+_backup_pre_email_export/
 .tools/
 
 # Build output
@@ -18,6 +24,10 @@ backend-output.log
 frontend-error.log
 frontend-output.log
 npm-debug.log*
+
+# Secrets / lokalna podesavanja (Gmail App Password, JWT kljuc...)
+application-local.properties
+backend/src/main/resources/application-local.properties
 
 # Env files
 .env

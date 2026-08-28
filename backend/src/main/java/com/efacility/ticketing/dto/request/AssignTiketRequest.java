@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class AssignTiketRequest {
 
-    @NotNull
+    @NotNull(message = "Id tiketa je obavezan")
     private Long ticketId;
 
-    @NotNull
+    @NotNull(message = "Tehničar je obavezan")
     private Long technicianId;
 }

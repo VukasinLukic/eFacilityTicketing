@@ -8,15 +8,15 @@ import lombok.Data;
 @Data
 public class CreateTiketRequest {
 
-    @NotBlank
+    @NotBlank(message = "Naslov je obavezan")
     private String title;
 
-    @NotBlank
+    @NotBlank(message = "Opis je obavezan")
     private String description;
 
-    @NotNull
+    @NotNull(message = "Prioritet je obavezan")
     private Prioritet priority;
 
-    @NotNull
+    @NotNull(message = "Stan je obavezan")
     private Long apartmentId;
 }

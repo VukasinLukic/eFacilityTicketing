@@ -28,10 +28,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-/**
- * Testira state-machine logiku za promenu statusa i prioriteta tiketa
- * (TiketService.validateStatusTransition / updatePrioritet).
- */
 @ExtendWith(MockitoExtension.class)
 class TiketServiceTest {
 
@@ -45,6 +41,8 @@ class TiketServiceTest {
     private TiketMapper ticketMapper;
     @Mock
     private IstorijaTiketaService ticketHistoryService;
+    @Mock
+    private EmailService emailService;
 
     private TiketService tiketService;
 
@@ -55,7 +53,7 @@ class TiketServiceTest {
     @BeforeEach
     void setUp() {
         tiketService = new TiketService(ticketRepository, apartmentRepository, userRepository,
-                ticketMapper, ticketHistoryService);
+                ticketMapper, ticketHistoryService, new TiketPristup(), emailService);
 
         technician = new Korisnik();
         technician.setId(1L);

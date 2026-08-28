@@ -22,7 +22,7 @@ export default function TiketCard({ ticket }: { ticket: TiketDTO }) {
       </div>
       <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
         <span>
-          {ticket.apartment.building.name} — Apt {ticket.apartment.number}
+          {ticket.apartment.building.name} — stan {ticket.apartment.number}
         </span>
         <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
       </div>

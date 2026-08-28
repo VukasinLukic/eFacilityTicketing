@@ -23,7 +23,7 @@ export default function LoginPage() {
       login(data);
       navigate('/dashboard');
     } catch (err) {
-      setError(getErrorMessage(err, 'Invalid email or password.'));
+      setError(getErrorMessage(err, 'Pogrešan e-mail ili lozinka!'));
     } finally {
       setLoading(false);
     }
@@ -33,7 +33,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">eFacility Tiketing</h1>
-        <h2 className="text-lg font-semibold mb-4 text-gray-700">Sign In</h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-700">Prijava</h2>
         {error && (
           <div className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 p-3 rounded">
             {error}
@@ -41,7 +41,7 @@ export default function LoginPage() {
         )}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
             <input
               type="email"
               value={email}
@@ -52,7 +52,7 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Lozinka</label>
             <input
               type="password"
               value={password}
@@ -67,12 +67,12 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-2 rounded font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Prijavljivanje...' : 'Prijavi se'}
           </button>
         </form>
         <p className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-blue-600 hover:underline font-medium">Register</Link>
+          Nemate nalog?{' '}
+          <Link to="/register" className="text-blue-600 hover:underline font-medium">Registrujte se</Link>
         </p>
       </div>
     </div>

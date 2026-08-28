@@ -6,9 +6,9 @@ import lombok.Data;
 @Data
 public class CreateZgradaRequest {
 
-    @NotBlank
+    @NotBlank(message = "Naziv zgrade je obavezan")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Adresa je obavezna")
     private String address;
 }

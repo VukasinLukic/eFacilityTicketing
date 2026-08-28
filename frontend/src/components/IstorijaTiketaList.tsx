@@ -3,7 +3,7 @@ import StatusTiketaBadge from './StatusTiketaBadge';
 
 export default function IstorijaTiketaList({ history }: { history: IstorijaTiketaDTO[] }) {
   if (history.length === 0) {
-    return <p className="text-sm text-gray-400 italic">No history yet.</p>;
+    return <p className="text-sm text-gray-400 italic">Još nema izmena.</p>;
   }
 
   return (
@@ -17,12 +17,12 @@ export default function IstorijaTiketaList({ history }: { history: IstorijaTiket
                 <span className="text-gray-400">→</span>
               </>
             ) : (
-              <span className="text-gray-400 text-xs italic">Created as</span>
+              <span className="text-gray-400 text-xs italic">Kreiran kao</span>
             )}
             <StatusTiketaBadge status={h.newStatus} />
           </div>
           <div className="flex-1 flex items-center justify-between text-xs text-gray-400">
-            <span>by {h.changedBy.firstName} {h.changedBy.lastName}</span>
+            <span>{h.changedBy.firstName} {h.changedBy.lastName}</span>
             <span>{new Date(h.changedAt).toLocaleString()}</span>
           </div>
         </div>

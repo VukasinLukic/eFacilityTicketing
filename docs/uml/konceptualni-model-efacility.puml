@@ -1,10 +1,11 @@
 @startuml
 title Konceptualni model — eFacilityTicketing
 
-left to right direction
+top to bottom direction
 hide empty members
 skinparam backgroundColor white
 skinparam shadowing false
+skinparam dpi 150
 skinparam classAttributeIconSize 0
 skinparam class {
   BackgroundColor white
@@ -59,16 +60,38 @@ class IstorijaTiketa {
 }
 
 Zgrada "1" *-- "0..*" Stan : sadrži
+note on link
+Stan ne postoji bez Zgrade (uvek se kreira u kontekstu zgrade),
+lokalno jedinstven po (building_id, number), briše se kaskadno
+sa zgradom — osim ako ima tikete (zaštita istorije).
+end note
+
 Stan "1" -- "0..*" Tiket : predmet prijave
+note on link
+Asocijacija, ne kompozicija: tiket ne nestaje sa stanom
+jer nosi istoriju prijavljenog kvara. Brisanje stana koji
+ima tikete se odbija (StanService.deleteStan).
+end note
 
 Korisnik "1" -- "0..*" Tiket : stanar prijavljuje
 Korisnik "0..1" -- "0..*" Tiket : menadžer zatvara
 Korisnik "0..1" -- "0..*" Tiket : tehničar rešava
 
 Tiket "1" *-- "0..*" Komentar : ima
+note on link
+Komentar ne postoji bez Tiketa i briše se kaskadno
+sa njim (cascade = ALL, orphanRemoval = true).
+end note
+
 Korisnik "1" -- "0..*" Komentar : ostavlja
 
 Tiket "1" *-- "1..*" IstorijaTiketa : prati promene
+note on link
+Istorija je deo tiketa i briše se kaskadno sa njim.
+Kardinalnost 1..* sprovodi TiketService.createTiket,
+koji upisuje prelaz u OPEN već pri kreiranju tiketa.
+end note
+
 Korisnik "1" -- "0..*" IstorijaTiketa : menja status
 
 note right of Korisnik

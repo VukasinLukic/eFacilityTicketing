@@ -8,6 +8,7 @@ import com.efacility.ticketing.mapper.StanMapper;
 import com.efacility.ticketing.model.Stan;
 import com.efacility.ticketing.model.Zgrada;
 import com.efacility.ticketing.repository.StanRepository;
+import com.efacility.ticketing.repository.TiketRepository;
 import com.efacility.ticketing.repository.ZgradaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,13 +22,16 @@ public class StanService {
 
     private final StanRepository apartmentRepository;
     private final ZgradaRepository buildingRepository;
+    private final TiketRepository ticketRepository;
     private final StanMapper apartmentMapper;
 
     public StanService(StanRepository apartmentRepository,
                             ZgradaRepository buildingRepository,
+                            TiketRepository ticketRepository,
                             StanMapper apartmentMapper) {
         this.apartmentRepository = apartmentRepository;
         this.buildingRepository = buildingRepository;
+        this.ticketRepository = ticketRepository;
         this.apartmentMapper = apartmentMapper;
     }
 
@@ -42,7 +46,7 @@ public class StanService {
     @Transactional(readOnly = true)
     public List<StanDTO> getByZgrada(Long buildingId) {
         if (!buildingRepository.existsById(buildingId)) {
-            throw new ResourceNotFoundException("Building not found with id: " + buildingId);
+            throw new ResourceNotFoundException("Zgrada nije pronađena, id: " + buildingId);
         }
         return apartmentRepository.findByBuildingId(buildingId)
                 .stream()
@@ -53,13 +57,13 @@ public class StanService {
     @Transactional(readOnly = true)
     public StanDTO getStan(Long id) {
         Stan apartment = apartmentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Stan nije pronađen, id: " + id));
         return apartmentMapper.toDomainDTO(apartment);
     }
 
     public StanDTO addStan(CreateStanRequest request) {
         Zgrada building = buildingRepository.findById(request.getBuildingId())
-                .orElseThrow(() -> new ResourceNotFoundException("Building not found with id: " + request.getBuildingId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Zgrada nije pronađena, id: " + request.getBuildingId()));
         Stan apartment = new Stan();
         apartment.setNumber(request.getNumber());
         apartment.setFloor(request.getFloor());
@@ -70,9 +74,9 @@ public class StanService {
 
     public StanDTO updateStan(UpdateStanRequest request) {
         Stan apartment = apartmentRepository.findById(request.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found with id: " + request.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Stan nije pronađen, id: " + request.getId()));
         Zgrada building = buildingRepository.findById(request.getBuildingId())
-                .orElseThrow(() -> new ResourceNotFoundException("Building not found with id: " + request.getBuildingId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Zgrada nije pronađena, id: " + request.getBuildingId()));
         apartment.setNumber(request.getNumber());
         apartment.setFloor(request.getFloor());
         apartment.setBuilding(building);
@@ -82,9 +86,13 @@ public class StanService {
 
     public String deleteStan(Long id) {
         if (!apartmentRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Apartment not found with id: " + id);
+            throw new ResourceNotFoundException("Stan nije pronađen, id: " + id);
+        }
+        if (ticketRepository.existsByApartmentId(id)) {
+            throw new IllegalArgumentException(
+                    "Stan se ne može obrisati: za njega postoje prijavljeni tiketi.");
         }
         apartmentRepository.deleteById(id);
-        return "Apartment deleted successfully!";
+        return "Stan je uspešno obrisan!";
     }
 }

@@ -7,12 +7,12 @@ import lombok.Data;
 @Data
 public class CreateStanRequest {
 
-    @NotBlank
+    @NotBlank(message = "Broj stana je obavezan")
     private String number;
 
-    @NotNull
+    @NotNull(message = "Sprat je obavezan")
     private Integer floor;
 
-    @NotNull
+    @NotNull(message = "Zgrada je obavezna")
     private Long buildingId;
 }

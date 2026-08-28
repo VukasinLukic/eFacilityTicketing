@@ -16,7 +16,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/buildings")
-@CrossOrigin("http://localhost:3000")
 public class ZgradaController {
 
     private final ZgradaService zgradaService;
@@ -29,7 +28,7 @@ public class ZgradaController {
     public ResponseEntity<Response> getAll() {
         List<ZgradaDTO> buildings = zgradaService.getAll();
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Buildings fetched", Map.of("buildings", buildings), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Zgrade su učitane.", Map.of("buildings", buildings), HttpStatus.OK)
         );
     }
 
@@ -37,7 +36,7 @@ public class ZgradaController {
     public ResponseEntity<Response> getZgrada(@PathVariable Long id) {
         ZgradaDTO building = zgradaService.getZgrada(id);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Building fetched", Map.of("building", building), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Zgrada je učitana.", Map.of("building", building), HttpStatus.OK)
         );
     }
 
@@ -45,7 +44,7 @@ public class ZgradaController {
     public ResponseEntity<Response> add(@Valid @RequestBody CreateZgradaRequest request) {
         ZgradaDTO building = zgradaService.addZgrada(request);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Building added successfully", Map.of("building", building), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Zgrada je uspešno dodata!", Map.of("building", building), HttpStatus.OK)
         );
     }
 
@@ -53,7 +52,7 @@ public class ZgradaController {
     public ResponseEntity<Response> update(@Valid @RequestBody UpdateZgradaRequest request) {
         ZgradaDTO building = zgradaService.updateZgrada(request);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Building updated successfully", Map.of("building", building), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Zgrada je uspešno ažurirana!", Map.of("building", building), HttpStatus.OK)
         );
     }
 

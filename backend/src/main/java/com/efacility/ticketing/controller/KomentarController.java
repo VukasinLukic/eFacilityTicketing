@@ -17,7 +17,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/comments")
-@CrossOrigin("http://localhost:3000")
 public class KomentarController {
 
     private final KomentarService komentarService;
@@ -31,7 +30,7 @@ public class KomentarController {
                                                 @AuthenticationPrincipal Korisnik currentKorisnik) {
         List<KomentarDTO> comments = komentarService.getKomentarsByTiket(ticketId, currentKorisnik);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Comments fetched", Map.of("comments", comments), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Komentari su učitani.", Map.of("comments", comments), HttpStatus.OK)
         );
     }
 
@@ -40,7 +39,7 @@ public class KomentarController {
                                         @AuthenticationPrincipal Korisnik currentKorisnik) {
         KomentarDTO comment = komentarService.addKomentar(request, currentKorisnik);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Comment added", Map.of("comment", comment), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Komentar je dodat!", Map.of("comment", comment), HttpStatus.OK)
         );
     }
 }

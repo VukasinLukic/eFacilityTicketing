@@ -36,25 +36,31 @@ public class TiketService {
     private final KorisnikRepository userRepository;
     private final TiketMapper ticketMapper;
     private final IstorijaTiketaService ticketHistoryService;
+    private final TiketPristup tiketPristup;
+    private final EmailService emailService;
 
     public TiketService(TiketRepository ticketRepository,
                          StanRepository apartmentRepository,
                          KorisnikRepository userRepository,
                          TiketMapper ticketMapper,
-                         IstorijaTiketaService ticketHistoryService) {
+                         IstorijaTiketaService ticketHistoryService,
+                         TiketPristup tiketPristup,
+                         EmailService emailService) {
         this.ticketRepository = ticketRepository;
         this.apartmentRepository = apartmentRepository;
         this.userRepository = userRepository;
         this.ticketMapper = ticketMapper;
         this.ticketHistoryService = ticketHistoryService;
+        this.tiketPristup = tiketPristup;
+        this.emailService = emailService;
     }
 
     public TiketDTO createTiket(CreateTiketRequest request, Korisnik currentKorisnik) {
         Stan apartment = apartmentRepository.findById(request.getApartmentId())
-                .orElseThrow(() -> new ResourceNotFoundException("Apartment not found with id: " + request.getApartmentId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Stan nije pronađen, id: " + request.getApartmentId()));
 
         Korisnik tenant = userRepository.findById(currentKorisnik.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Korisnik nije pronađen!"));
 
         Tiket ticket = new Tiket();
         ticket.setTitle(request.getTitle());
@@ -97,29 +103,29 @@ public class TiketService {
     @Transactional(readOnly = true)
     public TiketDTO getTiket(Long ticketId, Korisnik currentKorisnik) {
         Tiket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + ticketId));
-        checkTiketAccess(ticket, currentKorisnik);
+                .orElseThrow(() -> new ResourceNotFoundException("Tiket nije pronađen, id: " + ticketId));
+        tiketPristup.proveriPristup(ticket, currentKorisnik);
         return ticketMapper.toDomainDTO(ticket);
     }
 
     public TiketDTO assignTechnician(AssignTiketRequest request, Korisnik manager) {
         Tiket ticket = ticketRepository.findById(request.getTicketId())
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + request.getTicketId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Tiket nije pronađen, id: " + request.getTicketId()));
 
         if (ticket.getStatus() != StatusTiketa.OPEN) {
             throw new InvalidStatusTransitionException(
-                    "Can only assign technician to OPEN tickets. Current status: " + ticket.getStatus());
+                    "Tehničar se može dodeliti samo tiketu u statusu OPEN. Trenutni status: " + ticket.getStatus());
         }
 
         Korisnik technician = userRepository.findById(request.getTechnicianId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + request.getTechnicianId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Korisnik nije pronađen, id: " + request.getTechnicianId()));
 
         if (technician.getRole() != Uloga.TECHNICIAN) {
-            throw new IllegalArgumentException("User with id " + request.getTechnicianId() + " is not a TECHNICIAN");
+            throw new IllegalArgumentException("Korisnik sa id " + request.getTechnicianId() + " nije tehničar!");
         }
 
         Korisnik managedManager = userRepository.findById(manager.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Korisnik nije pronađen!"));
 
         StatusTiketa oldStatus = ticket.getStatus();
         ticket.setTechnician(technician);
@@ -134,10 +140,10 @@ public class TiketService {
 
     public TiketDTO updateStatus(UpdateStatusRequest request, Korisnik currentKorisnik) {
         Tiket ticket = ticketRepository.findById(request.getTicketId())
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + request.getTicketId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Tiket nije pronađen, id: " + request.getTicketId()));
 
         Korisnik managedKorisnik = userRepository.findById(currentKorisnik.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Korisnik nije pronađen!"));
 
         StatusTiketa oldStatus = ticket.getStatus();
         StatusTiketa newStatus = request.getNewStatus();
@@ -148,16 +154,32 @@ public class TiketService {
         Tiket saved = ticketRepository.save(ticket);
         ticketHistoryService.createHistoryEntry(saved, managedKorisnik, oldStatus, newStatus);
 
-        return ticketMapper.toDomainDTO(saved);
+        TiketDTO result = ticketMapper.toDomainDTO(saved);
+
+        ucitajZaObavestenje(saved);
+        emailService.sendStatusChangeEmail(saved, oldStatus, newStatus);
+
+        return result;
+    }
+
+    private void ucitajZaObavestenje(Tiket ticket) {
+        Korisnik tenant = ticket.getTenant();
+        if (tenant != null) {
+            tenant.getEmail();
+        }
+        Stan apartment = ticket.getApartment();
+        if (apartment != null && apartment.getBuilding() != null) {
+            apartment.getBuilding().getName();
+        }
     }
 
     public TiketDTO updatePrioritet(UpdatePrioritetRequest request, Korisnik currentKorisnik) {
         Tiket ticket = ticketRepository.findById(request.getTicketId())
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id: " + request.getTicketId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Tiket nije pronađen, id: " + request.getTicketId()));
 
         if (ticket.getStatus() == StatusTiketa.CLOSED) {
             throw new InvalidStatusTransitionException(
-                    "Cannot change priority of a CLOSED ticket.");
+                    "Prioritet zatvorenog tiketa se ne može menjati!");
         }
 
         ticket.setPriority(request.getPriority());
@@ -166,39 +188,19 @@ public class TiketService {
         return ticketMapper.toDomainDTO(saved);
     }
 
-    // ===================== Helpers =====================
-
-    private void checkTiketAccess(Tiket ticket, Korisnik currentKorisnik) {
-        switch (currentKorisnik.getRole()) {
-            case MANAGER -> {
-                // Manager sees all tickets
-            }
-            case TENANT -> {
-                if (!ticket.getTenant().getId().equals(currentKorisnik.getId())) {
-                    throw new TiketAccessDeniedException("You can only view your own tickets");
-                }
-            }
-            case TECHNICIAN -> {
-                if (ticket.getTechnician() == null || !ticket.getTechnician().getId().equals(currentKorisnik.getId())) {
-                    throw new TiketAccessDeniedException("You can only view tickets assigned to you");
-                }
-            }
-        }
-    }
-
     private void validateStatusTransition(Tiket ticket, StatusTiketa current, StatusTiketa next, Korisnik user) {
         Uloga role = user.getRole();
 
         if (role == Uloga.TECHNICIAN) {
             if (ticket.getTechnician() == null || !ticket.getTechnician().getId().equals(user.getId())) {
-                throw new TiketAccessDeniedException("You are not the assigned technician for this ticket");
+                throw new TiketAccessDeniedException("Niste tehničar zadužen za ovaj tiket!");
             }
             boolean valid = (current == StatusTiketa.ASSIGNED && next == StatusTiketa.IN_PROGRESS)
                     || (current == StatusTiketa.IN_PROGRESS && next == StatusTiketa.COMPLETED);
             if (!valid) {
                 throw new InvalidStatusTransitionException(
-                        "Technician can only change: ASSIGNED → IN_PROGRESS or IN_PROGRESS → COMPLETED. " +
-                        "Current: " + current + ", Requested: " + next);
+                        "Tehničar može menjati status samo: ASSIGNED → IN_PROGRESS ili IN_PROGRESS → COMPLETED. " +
+                        "Trenutni: " + current + ", traženi: " + next);
             }
             return;
         }
@@ -206,8 +208,8 @@ public class TiketService {
         if (role == Uloga.MANAGER) {
             if (current != StatusTiketa.COMPLETED || next != StatusTiketa.CLOSED) {
                 throw new InvalidStatusTransitionException(
-                        "Manager can only close a COMPLETED ticket. Current: " + current
-                                + ", Requested: " + next);
+                        "Menadžer može zatvoriti samo završen (COMPLETED) tiket. Trenutni: " + current
+                                + ", traženi: " + next);
             }
         }
     }

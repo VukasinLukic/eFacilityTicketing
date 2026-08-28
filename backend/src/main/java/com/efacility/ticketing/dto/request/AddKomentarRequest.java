@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class AddKomentarRequest {
 
-    @NotNull
+    @NotNull(message = "Id tiketa je obavezan")
     private Long ticketId;
 
-    @NotBlank
+    @NotBlank(message = "Tekst komentara je obavezan")
     private String message;
 }

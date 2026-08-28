@@ -16,7 +16,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/apartments")
-@CrossOrigin("http://localhost:3000")
 public class StanController {
 
     private final StanService apartmentService;
@@ -29,7 +28,7 @@ public class StanController {
     public ResponseEntity<Response> getAll() {
         List<StanDTO> apartments = apartmentService.getAll();
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Apartments fetched", Map.of("apartments", apartments), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Stanovi su učitani.", Map.of("apartments", apartments), HttpStatus.OK)
         );
     }
 
@@ -37,7 +36,7 @@ public class StanController {
     public ResponseEntity<Response> getByZgrada(@PathVariable Long buildingId) {
         List<StanDTO> apartments = apartmentService.getByZgrada(buildingId);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Apartments fetched", Map.of("apartments", apartments), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Stanovi su učitani.", Map.of("apartments", apartments), HttpStatus.OK)
         );
     }
 
@@ -45,7 +44,7 @@ public class StanController {
     public ResponseEntity<Response> getStan(@PathVariable Long id) {
         StanDTO apartment = apartmentService.getStan(id);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Apartment fetched", Map.of("apartment", apartment), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Stan je učitan.", Map.of("apartment", apartment), HttpStatus.OK)
         );
     }
 
@@ -53,7 +52,7 @@ public class StanController {
     public ResponseEntity<Response> add(@Valid @RequestBody CreateStanRequest request) {
         StanDTO apartment = apartmentService.addStan(request);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Apartment added successfully", Map.of("apartment", apartment), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Stan je uspešno dodat!", Map.of("apartment", apartment), HttpStatus.OK)
         );
     }
 
@@ -61,7 +60,7 @@ public class StanController {
     public ResponseEntity<Response> update(@Valid @RequestBody UpdateStanRequest request) {
         StanDTO apartment = apartmentService.updateStan(request);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Apartment updated successfully", Map.of("apartment", apartment), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Stan je uspešno ažuriran!", Map.of("apartment", apartment), HttpStatus.OK)
         );
     }
 

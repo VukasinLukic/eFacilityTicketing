@@ -16,4 +16,10 @@ public interface TiketRepository extends JpaRepository<Tiket, Long>, JpaSpecific
     List<Tiket> findByStatus(StatusTiketa status);
 
     long countByStatus(StatusTiketa status);
+
+
+    boolean existsByApartment_Building_Id(Long buildingId);
+
+
+    boolean existsByApartmentId(Long apartmentId);
 }

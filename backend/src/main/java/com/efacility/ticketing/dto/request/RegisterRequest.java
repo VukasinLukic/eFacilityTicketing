@@ -10,20 +10,20 @@ import lombok.Data;
 @Data
 public class RegisterRequest {
 
-    @NotBlank
+    @NotBlank(message = "Ime je obavezno")
     private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "Prezime je obavezno")
     private String lastName;
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "E-mail je obavezan")
+    @Email(message = "E-mail adresa nije ispravna")
     private String email;
 
-    @NotBlank
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @NotBlank(message = "Lozinka je obavezna")
+    @Size(min = 6, message = "Lozinka mora imati najmanje 6 karaktera")
     private String password;
 
-    @NotNull
+    @NotNull(message = "Uloga je obavezna")
     private Uloga role;
 }

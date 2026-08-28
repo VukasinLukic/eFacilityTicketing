@@ -15,7 +15,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin("http://localhost:3000")
 public class AuthController {
 
     private final AuthService authService;
@@ -28,7 +27,7 @@ public class AuthController {
     public ResponseEntity<Response> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse authResponse = authService.register(request);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Registered successfully", Map.of("auth", authResponse), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Registracija je uspešna!", Map.of("auth", authResponse), HttpStatus.OK)
         );
     }
 
@@ -36,7 +35,7 @@ public class AuthController {
     public ResponseEntity<Response> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse authResponse = authService.login(request);
         return ResponseEntity.ok(
-                HttpResponse.getResponseWithData("Login successful", Map.of("auth", authResponse), HttpStatus.OK)
+                HttpResponse.getResponseWithData("Prijava je uspešna!", Map.of("auth", authResponse), HttpStatus.OK)
         );
     }
 }

@@ -1,0 +1,54 @@
+@startuml
+title Дијаграм случајева коришћења — Станар
+
+left to right direction
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam dpi 150
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor white
+  BorderColor #333333
+  FontColor #222222
+}
+skinparam actor {
+  BackgroundColor white
+  BorderColor #333333
+}
+
+actor "Станар\n(TENANT)" as Stanar
+
+rectangle "eFacility Тикетинг" {
+  usecase "СК2 Регистрација корисника" as UC2
+  usecase "СК1 Пријава корисника" as UC1
+  usecase "СК3 Преглед контролне табле" as UC3
+  usecase "СК4 Креирање тикета" as UC4
+  usecase "СК5 Претрага и филтрирање тикета" as UC5
+  usecase "СК6 Преглед детаља тикета" as UC6
+  usecase "СК10 Додавање коментара" as UC10
+  usecase "СК11 Преглед историје статуса" as UC11
+}
+
+Stanar --> UC2
+Stanar --> UC1
+Stanar --> UC3
+Stanar --> UC4
+Stanar --> UC5
+Stanar --> UC6
+
+UC6 ..> UC11 : <<include>>
+UC10 ..> UC6 : <<extend>>
+
+note bottom of UC4
+Тикет може да креира само станар
+(POST /tickets/create, улога TENANT).
+Тикет се увек везује за изабрани стан.
+end note
+
+note bottom of UC6
+Станар види искључиво своје тикете.
+Проверу спроводи TiketPristup у сервисном
+слоју, за тикет, коментаре и историју.
+end note
+
+@enduml

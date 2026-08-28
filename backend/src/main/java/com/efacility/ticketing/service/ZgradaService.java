@@ -6,7 +6,7 @@ import com.efacility.ticketing.dto.request.UpdateZgradaRequest;
 import com.efacility.ticketing.exception.ResourceNotFoundException;
 import com.efacility.ticketing.mapper.ZgradaMapper;
 import com.efacility.ticketing.model.Zgrada;
-import com.efacility.ticketing.repository.StanRepository;
+import com.efacility.ticketing.repository.TiketRepository;
 import com.efacility.ticketing.repository.ZgradaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +19,14 @@ import java.util.stream.Collectors;
 public class ZgradaService {
 
     private final ZgradaRepository buildingRepository;
-    private final StanRepository apartmentRepository;
+    private final TiketRepository ticketRepository;
     private final ZgradaMapper buildingMapper;
 
     public ZgradaService(ZgradaRepository buildingRepository,
-                           StanRepository apartmentRepository,
+                           TiketRepository ticketRepository,
                            ZgradaMapper buildingMapper) {
         this.buildingRepository = buildingRepository;
-        this.apartmentRepository = apartmentRepository;
+        this.ticketRepository = ticketRepository;
         this.buildingMapper = buildingMapper;
     }
 
@@ -41,7 +41,7 @@ public class ZgradaService {
     @Transactional(readOnly = true)
     public ZgradaDTO getZgrada(Long id) {
         Zgrada building = buildingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Building not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Zgrada nije pronađena, id: " + id));
         return buildingMapper.toDomainDTO(building);
     }
 
@@ -55,7 +55,7 @@ public class ZgradaService {
 
     public ZgradaDTO updateZgrada(UpdateZgradaRequest request) {
         Zgrada building = buildingRepository.findById(request.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Building not found with id: " + request.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Zgrada nije pronađena, id: " + request.getId()));
         building.setName(request.getName());
         building.setAddress(request.getAddress());
         Zgrada saved = buildingRepository.save(building);
@@ -63,13 +63,15 @@ public class ZgradaService {
     }
 
     public String deleteZgrada(Long id) {
-        if (!buildingRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Building not found with id: " + id);
+        Zgrada building = buildingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Zgrada nije pronađena, id: " + id));
+
+        if (ticketRepository.existsByApartment_Building_Id(id)) {
+            throw new IllegalArgumentException(
+                    "Zgrada se ne može obrisati: neki stanovi imaju vezane tikete.");
         }
-        if (!apartmentRepository.findByBuildingId(id).isEmpty()) {
-            throw new IllegalArgumentException("Cannot delete building that has apartments. Delete apartments first.");
-        }
-        buildingRepository.deleteById(id);
-        return "Building deleted successfully!";
+
+        buildingRepository.delete(building);
+        return "Zgrada je uspešno obrisana!";
     }
 }

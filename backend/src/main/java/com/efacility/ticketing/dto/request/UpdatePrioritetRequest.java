@@ -7,9 +7,9 @@ import lombok.Data;
 @Data
 public class UpdatePrioritetRequest {
 
-    @NotNull
+    @NotNull(message = "Id tiketa je obavezan")
     private Long ticketId;
 
-    @NotNull
+    @NotNull(message = "Prioritet je obavezan")
     private Prioritet priority;
 }

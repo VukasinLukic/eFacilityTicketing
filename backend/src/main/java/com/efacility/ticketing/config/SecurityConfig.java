@@ -1,6 +1,7 @@
 package com.efacility.ticketing.config;
 
 import com.efacility.ticketing.security.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,6 +31,9 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
+    @Value("${application.cors.allowed-origin}")
+    private String allowedOrigin;
+
     public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, UserDetailsService userDetailsService) {
         this.jwtAuthFilter = jwtAuthFilter;
         this.userDetailsService = userDetailsService;
@@ -42,22 +46,20 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
 
-                        // Javni endpointi — bez tokena
                         .requestMatchers("/auth/**").permitAll()
 
-                        // --- Zgradas ---
                         .requestMatchers(HttpMethod.GET, "/buildings/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/buildings/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/buildings/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/buildings/**").hasRole("MANAGER")
 
-                        // --- Stans ---
                         .requestMatchers(HttpMethod.GET, "/apartments/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/apartments/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/apartments/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/apartments/**").hasRole("MANAGER")
 
-                        // --- Tikets ---
+                        .requestMatchers(HttpMethod.GET, "/tickets/export/**").hasAnyRole("MANAGER", "TECHNICIAN")
+
                         .requestMatchers(HttpMethod.POST, "/tickets/create").hasRole("TENANT")
                         .requestMatchers(HttpMethod.GET, "/tickets/my").hasRole("TENANT")
                         .requestMatchers(HttpMethod.GET, "/tickets/all").hasRole("MANAGER")
@@ -67,14 +69,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/tickets/updateStatus").hasAnyRole("MANAGER", "TECHNICIAN")
                         .requestMatchers(HttpMethod.GET, "/tickets/{id}").authenticated()
 
-                        // --- Komentars & History ---
                         .requestMatchers("/comments/**").authenticated()
                         .requestMatchers("/ticket-history/**").authenticated()
 
-                        // --- Dashboard ---
                         .requestMatchers("/dashboard/**").hasRole("MANAGER")
 
-                        // --- Korisniks ---
                         .requestMatchers(HttpMethod.GET, "/users/technicians").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.GET, "/users/me").authenticated()
 
@@ -90,7 +89,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of(allowedOrigin));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
