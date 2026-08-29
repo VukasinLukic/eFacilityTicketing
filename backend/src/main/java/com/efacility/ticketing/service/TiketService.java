@@ -199,8 +199,7 @@ public class TiketService {
                     || (current == StatusTiketa.IN_PROGRESS && next == StatusTiketa.COMPLETED);
             if (!valid) {
                 throw new InvalidStatusTransitionException(
-                        "Tehničar može menjati status samo: ASSIGNED → IN_PROGRESS ili IN_PROGRESS → COMPLETED. " +
-                        "Trenutni: " + current + ", traženi: " + next);
+                        "Tehničar može menjati status samo: ASSIGNED → IN_PROGRESS ili IN_PROGRESS → COMPLETED.");
             }
             return;
         }
@@ -208,8 +207,7 @@ public class TiketService {
         if (role == Uloga.MANAGER) {
             if (current != StatusTiketa.COMPLETED || next != StatusTiketa.CLOSED) {
                 throw new InvalidStatusTransitionException(
-                        "Menadžer može zatvoriti samo završen (COMPLETED) tiket. Trenutni: " + current
-                                + ", traženi: " + next);
+                        "Menadžer može zatvoriti samo završen (COMPLETED) tiket.");
             }
         }
     }

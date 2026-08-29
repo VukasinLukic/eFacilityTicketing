@@ -16,20 +16,11 @@ import KomentarForm from '../components/KomentarForm';
 import IstorijaTiketaList from '../components/IstorijaTiketaList';
 import DodeliTehnicaraModal from '../components/DodeliTehnicaraModal';
 import LoadingSpinner from '../components/LoadingSpinner';
-import { STATUS_LABELS, PRIORITY_LABELS } from '../utils/labels';
+import { STATUS_LABELS, PRIORITY_LABELS, datumIVreme } from '../utils/labels';
 
 const PRIORITY_OPTIONS: Prioritet[] = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
 
-function getTechnicianStatusOptions(current: StatusTiketa): StatusTiketa[] {
-  if (current === 'ASSIGNED') return ['ASSIGNED', 'IN_PROGRESS'];
-  if (current === 'IN_PROGRESS') return ['IN_PROGRESS', 'COMPLETED'];
-  return [current];
-}
-
-function getManagerStatusOptions(current: StatusTiketa): StatusTiketa[] {
-  if (current === 'COMPLETED') return ['COMPLETED', 'CLOSED'];
-  return [current];
-}
+const STATUS_OPTIONS: StatusTiketa[] = ['OPEN', 'ASSIGNED', 'IN_PROGRESS', 'COMPLETED', 'CLOSED'];
 
 export default function TiketDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -101,8 +92,6 @@ export default function TiketDetailPage() {
   const isManager = user?.role === 'MANAGER';
   const isTechnician = user?.role === 'TECHNICIAN';
   const isAssignedTech = isTechnician && ticket.technician?.id === user?.userId;
-  const techOptions = getTechnicianStatusOptions(ticket.status);
-  const managerOptions = getManagerStatusOptions(ticket.status);
 
   return (
     <div>
@@ -175,11 +164,11 @@ export default function TiketDetailPage() {
             )}
             <div>
               <span className="text-gray-400 block text-xs mb-0.5">Kreiran</span>
-              <span className="text-gray-700">{new Date(ticket.createdAt).toLocaleString()}</span>
+              <span className="text-gray-700">{datumIVreme(ticket.createdAt)}</span>
             </div>
             <div>
               <span className="text-gray-400 block text-xs mb-0.5">Poslednja izmena</span>
-              <span className="text-gray-700">{new Date(ticket.updatedAt).toLocaleString()}</span>
+              <span className="text-gray-700">{datumIVreme(ticket.updatedAt)}</span>
             </div>
           </div>
 
@@ -201,14 +190,14 @@ export default function TiketDetailPage() {
                 <select
                   value={ticket.status}
                   onChange={(e) => handleStatusChange(e.target.value as StatusTiketa)}
-                  disabled={statusUpdating || managerOptions.length === 1}
+                  disabled={statusUpdating}
                   className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
                 >
-                  {managerOptions.map((s) => (
+                  {STATUS_OPTIONS.map((s) => (
                     <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                   ))}
                 </select>
-                {managerOptions.length === 1 && (
+                {ticket.status !== 'COMPLETED' && (
                   <p className="mt-1 text-xs text-gray-400">
                     Tiket možete zatvoriti tek kada ga tehničar označi kao završen.
                   </p>
@@ -231,7 +220,7 @@ export default function TiketDetailPage() {
             </div>
           )}
 
-          {isAssignedTech && techOptions.length > 1 && (
+          {isAssignedTech && (
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Promeni status</h3>
               <select
@@ -240,7 +229,7 @@ export default function TiketDetailPage() {
                 disabled={statusUpdating}
                 className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
               >
-                {techOptions.map((s) => (
+                {STATUS_OPTIONS.map((s) => (
                   <option key={s} value={s}>{STATUS_LABELS[s]}</option>
                 ))}
               </select>

@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import type { TiketDTO } from '../types/tiket.types';
+import { datum } from '../utils/labels';
 import StatusTiketaBadge from './StatusTiketaBadge';
 import PrioritetBadge from './PrioritetBadge';
 
@@ -24,7 +25,7 @@ export default function TiketCard({ ticket }: { ticket: TiketDTO }) {
         <span>
           {ticket.apartment.building.name} — stan {ticket.apartment.number}
         </span>
-        <span>{new Date(ticket.createdAt).toLocaleDateString()}</span>
+        <span>{datum(ticket.createdAt)}</span>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import type { IstorijaTiketaDTO } from '../types/istorijaTiketa.types';
+import { datumIVreme } from '../utils/labels';
 import StatusTiketaBadge from './StatusTiketaBadge';
 
 export default function IstorijaTiketaList({ history }: { history: IstorijaTiketaDTO[] }) {
@@ -23,7 +24,7 @@ export default function IstorijaTiketaList({ history }: { history: IstorijaTiket
           </div>
           <div className="flex-1 flex items-center justify-between text-xs text-gray-400">
             <span>{h.changedBy.firstName} {h.changedBy.lastName}</span>
-            <span>{new Date(h.changedAt).toLocaleString()}</span>
+            <span>{datumIVreme(h.changedAt)}</span>
           </div>
         </div>
       ))}

@@ -237,7 +237,7 @@ export default function ZgradePage() {
                     onClick={(e) => { e.stopPropagation(); openEditZgrada(b); }}
                     className="text-xs text-blue-600 hover:underline"
                   >
-                    Edit
+                    Izmeni
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleDeleteZgrada(b.id); }}
@@ -252,7 +252,7 @@ export default function ZgradePage() {
               {expandedId === b.id && (
                 <div className="border-t border-gray-100 px-5 py-4">
                   <div className="flex items-center justify-between mb-3">
-                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Stans</h4>
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Stanovi</h4>
                     <button
                       onClick={() => openAddStan(b.id)}
                       className="text-xs text-blue-600 hover:underline font-medium"
@@ -268,7 +268,7 @@ export default function ZgradePage() {
                       </h5>
                       <div className="grid grid-cols-2 gap-3 mb-3">
                         <div>
-                          <label className="block text-xs text-gray-600 mb-1">Stan Number</label>
+                          <label className="block text-xs text-gray-600 mb-1">Broj stana</label>
                           <input
                             type="text"
                             value={aptForm.number}
@@ -318,19 +318,19 @@ export default function ZgradePage() {
                           key={a.id}
                           className="flex items-center justify-between border border-gray-200 rounded px-3 py-2 bg-gray-50 text-sm"
                         >
-                          <span className="text-gray-700">Apt {a.number} — Floor {a.floor}</span>
+                          <span className="text-gray-700">Stan {a.number} — {a.floor}. sprat</span>
                           <div className="flex gap-2 ml-2 shrink-0">
                             <button
                               onClick={() => openEditStan(a)}
                               className="text-xs text-blue-600 hover:underline"
                             >
-                              Edit
+                              Izmeni
                             </button>
                             <button
                               onClick={() => handleDeleteStan(a)}
                               className="text-xs text-red-500 hover:underline"
                             >
-                              Del
+                              Obriši
                             </button>
                           </div>
                         </div>

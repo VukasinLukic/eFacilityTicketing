@@ -73,8 +73,6 @@ export default function CreateTiketPage() {
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
-              minLength={5}
               maxLength={200}
               placeholder="Kratak opis kvara"
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -85,8 +83,6 @@ export default function CreateTiketPage() {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              required
-              minLength={10}
               rows={5}
               placeholder="Opišite kvar detaljno — gde je, šta se desilo, koliko je hitno..."
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"

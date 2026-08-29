@@ -1,5 +1,5 @@
 import type { KomentarDTO } from '../types/komentar.types';
-import { ROLE_LABELS } from '../utils/labels';
+import { ROLE_LABELS, datumIVreme } from '../utils/labels';
 
 export default function KomentarList({ comments }: { comments: KomentarDTO[] }) {
   if (comments.length === 0) {
@@ -16,7 +16,7 @@ export default function KomentarList({ comments }: { comments: KomentarDTO[] }) 
               <span className="ml-1 text-xs text-gray-400">({ROLE_LABELS[c.user.role]})</span>
             </span>
             <span className="text-xs text-gray-400">
-              {new Date(c.createdAt).toLocaleString()}
+              {datumIVreme(c.createdAt)}
             </span>
           </div>
           <p className="text-sm text-gray-600">{c.message}</p>

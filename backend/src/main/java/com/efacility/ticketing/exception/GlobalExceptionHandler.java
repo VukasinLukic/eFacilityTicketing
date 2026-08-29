@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
@@ -106,6 +107,16 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(HttpResponse.getResponse(poruka, HttpStatus.CONFLICT));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Response> handleNotReadable(HttpMessageNotReadableException ex) {
+        log.warn("Telo zahteva nije moglo da se procita: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(HttpResponse.getResponse(
+                        "Poslati podaci nisu u ispravnom formatu.",
+                        HttpStatus.BAD_REQUEST));
     }
 
     @ExceptionHandler(RuntimeException.class)

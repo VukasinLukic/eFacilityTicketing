@@ -25,3 +25,13 @@ export const ROLE_LABELS: Record<Uloga, string> = {
 export function brojTiketa(n: number): string {
   return `${n} ${n === 1 ? 'tiket' : 'tiketa'}`;
 }
+
+const LOKALITET = 'sr-Latn-RS';
+
+export function datumIVreme(iso: string): string {
+  return new Date(iso).toLocaleString(LOKALITET);
+}
+
+export function datum(iso: string): string {
+  return new Date(iso).toLocaleDateString(LOKALITET);
+}
