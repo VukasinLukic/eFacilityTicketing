@@ -8,4 +8,6 @@ import java.util.List;
 public interface StanRepository extends JpaRepository<Stan, Long> {
 
     List<Stan> findByBuildingId(Long buildingId);
+
+    boolean existsByBuildingId(Long buildingId);
 }

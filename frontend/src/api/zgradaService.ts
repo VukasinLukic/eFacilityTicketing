@@ -1,12 +1,22 @@
 import api from '../config/api';
 import type { BackendResponse } from '../types/api.types';
-import type { ZgradaDTO, CreateZgradaRequest, UpdateZgradaRequest } from '../types/zgrada.types';
+import type { ZgradaDTO, PagedZgrade, CreateZgradaRequest, UpdateZgradaRequest } from '../types/zgrada.types';
 import type { StanDTO, CreateStanRequest, UpdateStanRequest } from '../types/stan.types';
 
 export const zgradaService = {
   async getAll(): Promise<ZgradaDTO[]> {
     const res = await api.get<BackendResponse<{ buildings: ZgradaDTO[] }>>('/buildings/all');
     return res.data.data.buildings;
+  },
+
+  // Server-side paginacija: baza vraća samo traženu stranicu.
+  async getPaged(page: number, size = 5): Promise<PagedZgrade> {
+    console.log(`[zgradaService] GET /buildings/paged?page=${page}&size=${size}`);
+    const res = await api.get<BackendResponse<PagedZgrade>>('/buildings/paged', {
+      params: { page, size },
+    });
+    console.log('[zgradaService] primljeno sa servera:', res.data.data);
+    return res.data.data;
   },
 
   async getZgrada(id: number): Promise<ZgradaDTO> {

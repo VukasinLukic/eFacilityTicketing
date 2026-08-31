@@ -6,12 +6,16 @@ import com.efacility.ticketing.dto.request.UpdateZgradaRequest;
 import com.efacility.ticketing.exception.ResourceNotFoundException;
 import com.efacility.ticketing.mapper.ZgradaMapper;
 import com.efacility.ticketing.model.Zgrada;
-import com.efacility.ticketing.repository.TiketRepository;
+import com.efacility.ticketing.repository.StanRepository;
 import com.efacility.ticketing.repository.ZgradaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,14 +23,14 @@ import java.util.stream.Collectors;
 public class ZgradaService {
 
     private final ZgradaRepository buildingRepository;
-    private final TiketRepository ticketRepository;
+    private final StanRepository apartmentRepository;
     private final ZgradaMapper buildingMapper;
 
     public ZgradaService(ZgradaRepository buildingRepository,
-                           TiketRepository ticketRepository,
+                           StanRepository apartmentRepository,
                            ZgradaMapper buildingMapper) {
         this.buildingRepository = buildingRepository;
-        this.ticketRepository = ticketRepository;
+        this.apartmentRepository = apartmentRepository;
         this.buildingMapper = buildingMapper;
     }
 
@@ -36,6 +40,32 @@ public class ZgradaService {
                 .stream()
                 .map(buildingMapper::toDomainDTO)
                 .collect(Collectors.toList());
+    }
+
+    // Server-side paginacija: klijent traži stranu (page) i veličinu (size),
+    // baza vraća samo toliko redova + meta-podatke za navigaciju.
+    @Transactional(readOnly = true)
+    public Map<String, Object> getPaged(int page, int size) {
+        Page<Zgrada> result = buildingRepository.findAllPaged(PageRequest.of(page, size));
+
+        System.out.println("[PAGINACIJA] traženo: page=" + page + ", size=" + size
+                + " -> baza vratila " + result.getNumberOfElements() + " zgrada"
+                + " (ukupno u bazi: " + result.getTotalElements()
+                + ", ukupno strana: " + result.getTotalPages() + ")");
+
+        List<ZgradaDTO> content = result.getContent().stream()
+                .map(buildingMapper::toDomainDTO)
+                .collect(Collectors.toList());
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("buildings", content);
+        data.put("page", result.getNumber());
+        data.put("size", result.getSize());
+        data.put("totalElements", result.getTotalElements());
+        data.put("totalPages", result.getTotalPages());
+        data.put("first", result.isFirst());
+        data.put("last", result.isLast());
+        return data;
     }
 
     @Transactional(readOnly = true)
@@ -66,9 +96,9 @@ public class ZgradaService {
         Zgrada building = buildingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Zgrada nije pronađena, id: " + id));
 
-        if (ticketRepository.existsByApartment_Building_Id(id)) {
+        if (apartmentRepository.existsByBuildingId(id)) {
             throw new IllegalArgumentException(
-                    "Zgrada se ne može obrisati: neki stanovi imaju vezane tikete.");
+                    "Zgrada se ne može obrisati dok postoje stanovi povezani sa njom.");
         }
 
         buildingRepository.delete(building);

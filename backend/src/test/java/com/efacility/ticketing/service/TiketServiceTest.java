@@ -1,12 +1,14 @@
 package com.efacility.ticketing.service;
 
 import com.efacility.ticketing.dto.TiketDTO;
+import com.efacility.ticketing.dto.request.CreateTiketRequest;
 import com.efacility.ticketing.dto.request.UpdatePrioritetRequest;
 import com.efacility.ticketing.dto.request.UpdateStatusRequest;
 import com.efacility.ticketing.exception.InvalidStatusTransitionException;
 import com.efacility.ticketing.exception.TiketAccessDeniedException;
 import com.efacility.ticketing.mapper.TiketMapper;
 import com.efacility.ticketing.model.Korisnik;
+import com.efacility.ticketing.model.Stan;
 import com.efacility.ticketing.model.Tiket;
 import com.efacility.ticketing.model.enums.Prioritet;
 import com.efacility.ticketing.model.enums.StatusTiketa;
@@ -26,6 +28,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -175,5 +179,28 @@ class TiketServiceTest {
         tiketService.updatePrioritet(request, manager);
 
         assertThat(ticket.getPriority()).isEqualTo(Prioritet.URGENT);
+    }
+
+    @Test
+    void newlyCreatedTicketStartsWithoutHistoryEntries() {
+        Korisnik tenant = new Korisnik();
+        tenant.setId(3L);
+        tenant.setRole(Uloga.TENANT);
+
+        Stan apartment = new Stan();
+        apartment.setId(4L);
+
+        CreateTiketRequest request = new CreateTiketRequest();
+        request.setTitle("Curi slavina");
+        request.setDescription("Voda curi ispod sudopere.");
+        request.setPriority(Prioritet.HIGH);
+        request.setApartmentId(4L);
+
+        when(apartmentRepository.findById(4L)).thenReturn(Optional.of(apartment));
+        when(userRepository.findById(3L)).thenReturn(Optional.of(tenant));
+
+        tiketService.createTiket(request, tenant);
+
+        verify(ticketHistoryService, never()).createHistoryEntry(any(), any(), any(), any());
     }
 }

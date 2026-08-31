@@ -12,6 +12,7 @@ import TiketListPage from './pages/TiketListPage';
 import TiketDetailPage from './pages/TiketDetailPage';
 import CreateTiketPage from './pages/CreateTiketPage';
 import ZgradePage from './pages/ZgradePage';
+import ZgradeTabelaPage from './pages/ZgradeTabelaPage';
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
 
                 <Route element={<RoleRoute allowedUlogas={['MANAGER']} />}>
                   <Route path="/buildings" element={<ZgradePage />} />
+                  <Route path="/buildings/table" element={<ZgradeTabelaPage />} />
                 </Route>
               </Route>
             </Route>

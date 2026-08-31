@@ -4,12 +4,12 @@ import com.efacility.ticketing.model.enums.Prioritet;
 import com.efacility.ticketing.model.enums.StatusTiketa;
 import com.efacility.ticketing.model.enums.Uloga;
 import com.efacility.ticketing.repository.IstorijaTiketaRepository;
-import com.efacility.ticketing.repository.KomentarRepository;
 import com.efacility.ticketing.repository.StanRepository;
 import com.efacility.ticketing.repository.TiketRepository;
 import com.efacility.ticketing.repository.ZgradaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -31,8 +31,6 @@ class KompozicijaTest {
     private StanRepository apartmentRepository;
     @Autowired
     private TiketRepository ticketRepository;
-    @Autowired
-    private KomentarRepository commentRepository;
     @Autowired
     private IstorijaTiketaRepository historyRepository;
 
@@ -75,7 +73,7 @@ class KompozicijaTest {
     }
 
     @Test
-    void brisanjeZgradeKaskadnoBriseNjeneStanove() {
+    void brisanjeZgradeSaStanovimaJeOdbijenoJerJeVezaObicnaAsocijacija() {
         Long buildingId = building.getId();
         em.flush();
         em.clear();
@@ -83,16 +81,14 @@ class KompozicijaTest {
         Zgrada loaded = buildingRepository.findById(buildingId).orElseThrow();
         assertThat(loaded.getApartments()).hasSize(1);
 
-        buildingRepository.delete(loaded);
-        em.flush();
-        em.clear();
-
-        assertThat(buildingRepository.findById(buildingId)).isEmpty();
-        assertThat(apartmentRepository.findByBuildingId(buildingId)).isEmpty();
+        assertThatThrownBy(() -> {
+            buildingRepository.delete(loaded);
+            em.flush();
+        }).isInstanceOf(ConstraintViolationException.class);
     }
 
     @Test
-    void brisanjeTiketaKaskadnoBriseKomentareIIstoriju() {
+    void brisanjeTiketaSaKomentaromJeOdbijenoJerJeVezaObicnaAsocijacija() {
         Tiket ticket = noviTiket();
 
         Komentar comment = new Komentar();
@@ -108,12 +104,30 @@ class KompozicijaTest {
         history.setChangedBy(tenant);
         em.persist(history);
 
-        Long ticketId = ticket.getId();
         em.flush();
         em.clear();
 
-        assertThat(commentRepository.findByTicketIdOrderByCreatedAtAsc(ticketId)).hasSize(1);
-        assertThat(historyRepository.findByTicketIdOrderByChangedAtAsc(ticketId)).hasSize(1);
+        Tiket loaded = ticketRepository.findById(ticket.getId()).orElseThrow();
+        assertThatThrownBy(() -> {
+            ticketRepository.delete(loaded);
+            em.flush();
+        }).isInstanceOf(ConstraintViolationException.class);
+    }
+
+    @Test
+    void brisanjeTiketaBezKomentaraKaskadnoBriseNjegovuIstoriju() {
+        Tiket ticket = noviTiket();
+
+        IstorijaTiketa history = new IstorijaTiketa();
+        history.setOldStatus(null);
+        history.setNewStatus(StatusTiketa.OPEN);
+        history.setTicket(ticket);
+        history.setChangedBy(tenant);
+        em.persist(history);
+
+        Long ticketId = ticket.getId();
+        em.flush();
+        em.clear();
 
         Tiket loaded = ticketRepository.findById(ticketId).orElseThrow();
         ticketRepository.delete(loaded);
@@ -121,8 +135,17 @@ class KompozicijaTest {
         em.clear();
 
         assertThat(ticketRepository.findById(ticketId)).isEmpty();
-        assertThat(commentRepository.findByTicketIdOrderByCreatedAtAsc(ticketId)).isEmpty();
         assertThat(historyRepository.findByTicketIdOrderByChangedAtAsc(ticketId)).isEmpty();
+    }
+
+    @Test
+    void tiketMozePostojatiBezIstorijeJerJeKardinalitetNulaIliVise() {
+        Tiket ticket = noviTiket();
+        em.flush();
+        em.clear();
+
+        assertThat(ticketRepository.findById(ticket.getId())).isPresent();
+        assertThat(historyRepository.findByTicketIdOrderByChangedAtAsc(ticket.getId())).isEmpty();
     }
 
     @Test

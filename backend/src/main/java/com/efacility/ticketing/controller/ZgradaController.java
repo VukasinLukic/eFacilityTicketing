@@ -32,6 +32,18 @@ public class ZgradaController {
         );
     }
 
+    // Server-side paginacija: GET /buildings/paged?page=0&size=5
+    @GetMapping("/paged")
+    public ResponseEntity<Response> getPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        System.out.println("[ZgradaController] GET /buildings/paged -> page=" + page + ", size=" + size);
+        return ResponseEntity.ok(
+                HttpResponse.getResponseWithData("Zgrade su učitane (stranica " + page + ").",
+                        zgradaService.getPaged(page, size), HttpStatus.OK)
+        );
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Response> getZgrada(@PathVariable Long id) {
         ZgradaDTO building = zgradaService.getZgrada(id);

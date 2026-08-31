@@ -43,14 +43,25 @@ export default function Navbar() {
             </NavLink>
           )}
           {user?.role === 'MANAGER' && (
-            <NavLink
-              to="/buildings"
-              className={({ isActive }) =>
-                isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
-              }
-            >
-              Zgrade
-            </NavLink>
+            <>
+              <NavLink
+                to="/buildings"
+                end
+                className={({ isActive }) =>
+                  isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
+                }
+              >
+                Zgrade
+              </NavLink>
+              <NavLink
+                to="/buildings/table"
+                className={({ isActive }) =>
+                  isActive ? 'text-blue-600 font-medium' : 'text-gray-600 hover:text-gray-900'
+                }
+              >
+                Zgrade (tabela)
+              </NavLink>
+            </>
           )}
         </div>
       </div>

@@ -26,6 +26,6 @@ public class Zgrada implements DomainEntity {
     private String address;
 
 
-    @OneToMany(mappedBy = "building", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "building")
     private List<Stan> apartments = new ArrayList<>();
 }

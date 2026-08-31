@@ -71,7 +71,6 @@ public class TiketService {
         ticket.setApartment(apartment);
 
         Tiket saved = ticketRepository.save(ticket);
-        ticketHistoryService.createHistoryEntry(saved, tenant, null, StatusTiketa.OPEN);
 
         return ticketMapper.toDomainDTO(saved);
     }

@@ -1,0 +1,56 @@
+@startuml
+title eFacility Ticketing - struktura sistema
+
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam ArrowColor #444444
+skinparam RectangleBorderColor #555555
+skinparam PackageBorderColor #444444
+
+top to bottom direction
+
+package "React" as React {
+  rectangle "<b>Components:</b>\n\nLoginPage, RegisterPage, DashboardPage,\nTiketListPage, TiketDetailPage,\nCreateTiketPage, ZgradePage, NotFoundPage,\nNavbar, Layout, TiketCard,\nKomentarList, KomentarForm,\nIstorijaTiketaList, DodeliTehnicaraModal,\nIzvozPanel, StatusTiketaBadge,\nPrioritetBadge, LoadingSpinner" as Components
+
+  rectangle "<b>Services:</b>\n\nauthService\ntiketService\nzgradaService\nkomentarService\nistorijaTiketaService\nkorisnikService\ndashboardService" as FrontendServices
+
+  rectangle "HTTP Client\n(Axios)" as Axios
+
+  Components -right-> FrontendServices : poziva
+  FrontendServices -down-> Axios : koristi
+}
+
+package "Spring Boot" as SpringBoot {
+  rectangle "<b>Security:</b>\nJwtAuthenticationFilter\nSecurityConfig" as Security
+
+  rectangle "<b>Controllers:</b>\n\nAuthController\nKorisnikController\nZgradaController\nStanController\nTiketController\nKomentarController\nIstorijaTiketaController\nDashboardController" as Controllers
+
+  rectangle "<b>Services:</b>\n\nAuthService\nKorisnikService\nZgradaService\nStanService\nTiketService\nTiketPristup\nTiketExportService\nKomentarService\nIstorijaTiketaService\nDashboardService\nEmailService" as BackendServices
+
+  rectangle "<b>DTO Mapper:</b>\n\nKorisnikMapper\nZgradaMapper\nStanMapper\nTiketMapper\nKomentarMapper\nIstorijaTiketaMapper" as Mappers
+
+  rectangle "Entity <--> DTO" as EntityDto
+
+  rectangle "<b>JPA Repository:</b>\n\nKorisnikRepository\nZgradaRepository\nStanRepository\nTiketRepository\nKomentarRepository\nIstorijaTiketaRepository" as Repositories
+
+  Security -down-> Controllers : provera zahteva
+  Controllers -left-> BackendServices : poziva
+  BackendServices -left-> Mappers : mapira
+  Mappers -left-> EntityDto
+  BackendServices -down-> Repositories : pristupa podacima
+}
+
+database "MySQL\nefacility_ticketing" as MySQL
+
+Axios -down-> Security : HTTP / JSON + JWT
+Repositories -down-> MySQL : JPA / Hibernate
+
+note bottom of SpringBoot
+  Obicne strelice predstavljaju zavisnost/poziv izmedju slojeva.
+  UML kompozicija se ne koristi na ovom arhitektonskom dijagramu.
+end note
+
+@enduml

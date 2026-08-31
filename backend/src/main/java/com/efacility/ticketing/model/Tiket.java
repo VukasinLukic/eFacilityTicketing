@@ -59,7 +59,7 @@ public class Tiket implements DomainEntity {
     private Stan apartment;
 
 
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ticket")
     private List<Komentar> comments = new ArrayList<>();
 
 
