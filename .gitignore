@@ -31,6 +31,12 @@ backend/src/main/resources/application-local.properties
 .vscode/
 *.iml
 
+# Tools & Backups
+.tools/
+_backup_pre_srpski_rename/
+*.corrupt-backup
+~$*
+
 # OS
 .DS_Store
 Thumbs.db
