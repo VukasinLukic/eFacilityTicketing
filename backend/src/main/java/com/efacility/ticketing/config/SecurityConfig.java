@@ -53,7 +53,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/buildings/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/buildings/**").hasRole("MANAGER")
 
-                        .requestMatchers(HttpMethod.GET, "/apartments/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/apartments/my").hasRole("TENANT")
+                        .requestMatchers(HttpMethod.GET, "/apartments/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.POST, "/apartments/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/apartments/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/apartments/**").hasRole("MANAGER")
@@ -75,6 +76,7 @@ public class SecurityConfig {
                         .requestMatchers("/dashboard/**").hasRole("MANAGER")
 
                         .requestMatchers(HttpMethod.GET, "/users/technicians").hasRole("MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/users/tenants").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.GET, "/users/me").authenticated()
 
                         .anyRequest().authenticated()

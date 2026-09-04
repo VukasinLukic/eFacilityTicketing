@@ -9,6 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,6 +39,9 @@ public class Korisnik implements DomainEntity, UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Uloga role;
+
+    @OneToMany(mappedBy = "tenant")
+    private List<Stan> apartments = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

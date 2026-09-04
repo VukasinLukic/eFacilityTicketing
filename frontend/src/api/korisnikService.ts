@@ -8,6 +8,11 @@ export const korisnikService = {
     return res.data.data.technicians;
   },
 
+  async getTenants(): Promise<KorisnikDTO[]> {
+    const res = await api.get<BackendResponse<{ tenants: KorisnikDTO[] }>>('/users/tenants');
+    return res.data.data.tenants;
+  },
+
   async getMe(): Promise<KorisnikDTO> {
     const res = await api.get<BackendResponse<{ user: KorisnikDTO }>>('/users/me');
     return res.data.data.user;

@@ -4,7 +4,7 @@ import com.efacility.ticketing.dto.StanDTO;
 import com.efacility.ticketing.model.Stan;
 import org.mapstruct.Mapper;
 
-@Mapper(componentModel = "spring", uses = {ZgradaMapper.class})
+@Mapper(componentModel = "spring", uses = {ZgradaMapper.class, KorisnikMapper.class})
 public interface StanMapper extends BaseMapper<StanDTO, Stan> {
 
     @Override

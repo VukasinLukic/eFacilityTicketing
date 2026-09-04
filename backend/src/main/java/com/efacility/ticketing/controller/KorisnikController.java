@@ -38,4 +38,12 @@ public class KorisnikController {
                 HttpResponse.getResponseWithData("Tehničari su učitani.", Map.of("technicians", technicians), HttpStatus.OK)
         );
     }
+
+    @GetMapping("/tenants")
+    public ResponseEntity<Response> getTenants() {
+        List<KorisnikDTO> tenants = korisnikService.getAllTenants();
+        return ResponseEntity.ok(
+                HttpResponse.getResponseWithData("Stanari su učitani.", Map.of("tenants", tenants), HttpStatus.OK)
+        );
+    }
 }

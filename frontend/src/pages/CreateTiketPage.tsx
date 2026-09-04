@@ -14,6 +14,7 @@ export default function CreateTiketPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
   const [apartments, setStans] = useState<StanDTO[]>([]);
+  const [apartmentsLoading, setApartmentsLoading] = useState(true);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPrioritet] = useState<Prioritet>('MEDIUM');
@@ -22,9 +23,10 @@ export default function CreateTiketPage() {
   const [aptsError, setAptsError] = useState('');
 
   useEffect(() => {
-    zgradaService.getAllStans()
+    zgradaService.getMyStans()
       .then(setStans)
-      .catch(() => setAptsError('Učitavanje stanova nije uspelo. Pokušajte ponovo.'));
+      .catch(() => setAptsError('Učitavanje stanova nije uspelo. Pokušajte ponovo.'))
+      .finally(() => setApartmentsLoading(false));
   }, []);
 
   async function handleSubmit(e: FormEvent) {
@@ -62,6 +64,12 @@ export default function CreateTiketPage() {
       {aptsError && (
         <div className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 p-3 rounded">
           {aptsError}
+        </div>
+      )}
+
+      {!apartmentsLoading && !aptsError && apartments.length === 0 && (
+        <div className="mb-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded">
+          Nije vam dodeljen nijedan stan. Obratite se menadžeru pre prijave kvara.
         </div>
       )}
 
@@ -106,10 +114,11 @@ export default function CreateTiketPage() {
               <select
                 value={apartmentId}
                 onChange={(e) => setStanId(Number(e.target.value))}
+                disabled={apartmentsLoading || apartments.length === 0}
                 required
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">-- Izaberite stan --</option>
+                <option value="">-- Izaberite svoj stan --</option>
                 {apartments.map((a) => (
                   <option key={a.id} value={a.id}>
                     {a.building.name} — stan {a.number} ({a.floor}. sprat)
@@ -121,7 +130,7 @@ export default function CreateTiketPage() {
           <div className="flex gap-3 pt-2">
             <button
               type="submit"
-              disabled={loading || !apartmentId}
+              disabled={loading || apartmentsLoading || !apartmentId}
               className="px-6 py-2 bg-blue-600 text-white text-sm rounded font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
               {loading ? 'Kreiranje...' : 'Kreiraj tiket'}

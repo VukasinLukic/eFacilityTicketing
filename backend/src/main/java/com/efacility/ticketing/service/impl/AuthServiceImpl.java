@@ -1,0 +1,66 @@
+package com.efacility.ticketing.service.impl;
+
+import com.efacility.ticketing.dto.AuthResponse;
+import com.efacility.ticketing.dto.request.LoginRequest;
+import com.efacility.ticketing.dto.request.RegisterRequest;
+import com.efacility.ticketing.exception.EmailAlreadyExistsException;
+import com.efacility.ticketing.exception.ResourceNotFoundException;
+import com.efacility.ticketing.model.Korisnik;
+import com.efacility.ticketing.repository.KorisnikRepository;
+import com.efacility.ticketing.security.JwtService;
+import com.efacility.ticketing.service.AuthService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional
+public class AuthServiceImpl implements AuthService {
+
+    private final KorisnikRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+
+    public AuthServiceImpl(KorisnikRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService,
+                       AuthenticationManager authenticationManager) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+        this.authenticationManager = authenticationManager;
+    }
+
+    public AuthResponse register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new EmailAlreadyExistsException("Nalog sa ovom e-mail adresom već postoji: " + request.getEmail());
+        }
+        Korisnik user = new Korisnik();
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(request.getRole());
+
+        Korisnik saved = userRepository.save(user);
+        String token = jwtService.generateToken(saved);
+
+        return new AuthResponse(token, saved.getId(), saved.getEmail(), saved.getRole(),
+                saved.getFirstName(), saved.getLastName());
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+        );
+        Korisnik user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("Korisnik nije pronađen!"));
+        String token = jwtService.generateToken(user);
+
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole(),
+                user.getFirstName(), user.getLastName());
+    }
+}

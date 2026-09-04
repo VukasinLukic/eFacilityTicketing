@@ -13,5 +13,7 @@ public interface KorisnikMapper extends BaseMapper<KorisnikDTO, Korisnik> {
 
     @Override
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "apartments", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     Korisnik toDomainEntity(KorisnikDTO dto);
 }

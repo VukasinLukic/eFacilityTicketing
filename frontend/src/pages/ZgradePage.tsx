@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { zgradaService } from '../api/zgradaService';
+import { korisnikService } from '../api/korisnikService';
 import { useToast } from '../context/ToastContext';
 import { getErrorMessage } from '../utils/errorUtils';
 import type { ZgradaDTO } from '../types/zgrada.types';
 import type { StanDTO } from '../types/stan.types';
+import type { KorisnikDTO } from '../types/korisnik.types';
 import LoadingSpinner from '../components/LoadingSpinner';
 
-interface AptFormState { number: string; floor: string; }
+interface AptFormState { number: string; floor: string; tenantId: string; }
 interface ZgradaFormState { name: string; address: string; }
 
 export default function ZgradePage() {
@@ -21,10 +23,11 @@ export default function ZgradePage() {
 
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [apartmentsMap, setStansMap] = useState<Record<number, StanDTO[]>>({});
+  const [tenants, setTenants] = useState<KorisnikDTO[]>([]);
 
   const [showStanForm, setShowStanForm] = useState<number | null>(null);
   const [editingStan, setEditingStan] = useState<StanDTO | null>(null);
-  const [aptForm, setAptForm] = useState<AptFormState>({ number: '', floor: '' });
+  const [aptForm, setAptForm] = useState<AptFormState>({ number: '', floor: '', tenantId: '' });
   const [aptLoading, setAptLoading] = useState(false);
 
   useEffect(() => {
@@ -32,6 +35,12 @@ export default function ZgradePage() {
       .then(setZgradas)
       .catch((err) => showToast(getErrorMessage(err, 'Učitavanje zgrada nije uspelo.'), 'error'))
       .finally(() => setLoading(false));
+  }, [showToast]);
+
+  useEffect(() => {
+    korisnikService.getTenants()
+      .then(setTenants)
+      .catch((err) => showToast(getErrorMessage(err, 'Učitavanje stanara nije uspelo.'), 'error'));
   }, [showToast]);
 
   async function toggleExpand(buildingId: number) {
@@ -94,13 +103,17 @@ export default function ZgradePage() {
 
   function openAddStan(buildingId: number) {
     setEditingStan(null);
-    setAptForm({ number: '', floor: '' });
+    setAptForm({ number: '', floor: '', tenantId: '' });
     setShowStanForm(buildingId);
   }
 
   function openEditStan(apt: StanDTO) {
     setEditingStan(apt);
-    setAptForm({ number: apt.number, floor: String(apt.floor) });
+    setAptForm({
+      number: apt.number,
+      floor: String(apt.floor),
+      tenantId: apt.tenant ? String(apt.tenant.id) : '',
+    });
     setShowStanForm(apt.building.id);
   }
 
@@ -114,6 +127,7 @@ export default function ZgradePage() {
           number: aptForm.number.trim(),
           floor: Number(aptForm.floor),
           buildingId,
+          tenantId: aptForm.tenantId ? Number(aptForm.tenantId) : null,
         });
         setStansMap((prev) => ({
           ...prev,
@@ -125,6 +139,7 @@ export default function ZgradePage() {
           number: aptForm.number.trim(),
           floor: Number(aptForm.floor),
           buildingId,
+          tenantId: aptForm.tenantId ? Number(aptForm.tenantId) : null,
         });
         setStansMap((prev) => ({
           ...prev,
@@ -266,7 +281,7 @@ export default function ZgradePage() {
                       <h5 className="text-sm font-medium text-gray-700 mb-3">
                         {editingStan ? 'Izmena stana' : 'Novi stan'}
                       </h5>
-                      <div className="grid grid-cols-2 gap-3 mb-3">
+                      <div className="grid sm:grid-cols-3 gap-3 mb-3">
                         <div>
                           <label className="block text-xs text-gray-600 mb-1">Broj stana</label>
                           <input
@@ -287,6 +302,21 @@ export default function ZgradePage() {
                             placeholder="npr. 3"
                             className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-600 mb-1">Stanar</label>
+                          <select
+                            value={aptForm.tenantId}
+                            onChange={(e) => setAptForm((f) => ({ ...f, tenantId: e.target.value }))}
+                            className="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Slobodan stan</option>
+                            {tenants.map((tenant) => (
+                              <option key={tenant.id} value={tenant.id}>
+                                {tenant.firstName} {tenant.lastName}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -318,7 +348,14 @@ export default function ZgradePage() {
                           key={a.id}
                           className="flex items-center justify-between border border-gray-200 rounded px-3 py-2 bg-gray-50 text-sm"
                         >
-                          <span className="text-gray-700">Stan {a.number} — {a.floor}. sprat</span>
+                          <div className="min-w-0">
+                            <div className="text-gray-700">Stan {a.number} — {a.floor}. sprat</div>
+                            <div className="text-xs text-gray-400 truncate">
+                              {a.tenant
+                                ? `Stanar: ${a.tenant.firstName} ${a.tenant.lastName}`
+                                : 'Slobodan stan'}
+                            </div>
+                          </div>
                           <div className="flex gap-2 ml-2 shrink-0">
                             <button
                               onClick={() => openEditStan(a)}

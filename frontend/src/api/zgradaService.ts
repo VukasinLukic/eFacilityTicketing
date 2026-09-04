@@ -43,8 +43,8 @@ export const zgradaService = {
     return res.data.data.apartments;
   },
 
-  async getAllStans(): Promise<StanDTO[]> {
-    const res = await api.get<BackendResponse<{ apartments: StanDTO[] }>>('/apartments/all');
+  async getMyStans(): Promise<StanDTO[]> {
+    const res = await api.get<BackendResponse<{ apartments: StanDTO[] }>>('/apartments/my');
     return res.data.data.apartments;
   },
 
@@ -55,6 +55,14 @@ export const zgradaService = {
 
   async updateStan(data: UpdateStanRequest): Promise<StanDTO> {
     const res = await api.put<BackendResponse<{ apartment: StanDTO }>>('/apartments/update', data);
+    return res.data.data.apartment;
+  },
+
+  async assignTenant(apartmentId: number, tenantId: number | null): Promise<StanDTO> {
+    const res = await api.put<BackendResponse<{ apartment: StanDTO }>>(
+      `/apartments/${apartmentId}/assign-tenant`,
+      { tenantId },
+    );
     return res.data.data.apartment;
   },
 

@@ -8,6 +8,7 @@ import com.efacility.ticketing.model.Tiket;
 import com.efacility.ticketing.model.enums.Uloga;
 import com.efacility.ticketing.repository.IstorijaTiketaRepository;
 import com.efacility.ticketing.repository.TiketRepository;
+import com.efacility.ticketing.service.impl.IstorijaTiketaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +43,7 @@ class IstorijaTiketaServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new IstorijaTiketaService(ticketHistoryRepository, ticketRepository,
+        service = new IstorijaTiketaServiceImpl(ticketHistoryRepository, ticketRepository,
                 ticketHistoryMapper, new TiketPristup());
 
         vlasnik = korisnik(1L, Uloga.TENANT);

@@ -31,4 +31,8 @@ public class Stan implements DomainEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "building_id", nullable = false)
     private Zgrada building;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tenant_id")
+    private Korisnik tenant;
 }

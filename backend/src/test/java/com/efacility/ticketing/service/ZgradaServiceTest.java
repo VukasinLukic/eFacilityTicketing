@@ -7,6 +7,7 @@ import com.efacility.ticketing.model.Stan;
 import com.efacility.ticketing.model.Zgrada;
 import com.efacility.ticketing.repository.StanRepository;
 import com.efacility.ticketing.repository.ZgradaRepository;
+import com.efacility.ticketing.service.impl.ZgradaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +39,7 @@ class ZgradaServiceTest {
 
     @BeforeEach
     void setUp() {
-        zgradaService = new ZgradaService(buildingRepository, apartmentRepository, buildingMapper);
+        zgradaService = new ZgradaServiceImpl(buildingRepository, apartmentRepository, buildingMapper);
 
         building = new Zgrada();
         building.setId(10L);

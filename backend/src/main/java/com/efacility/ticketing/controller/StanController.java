@@ -4,11 +4,14 @@ import com.efacility.ticketing.connection.HttpResponse;
 import com.efacility.ticketing.connection.Response;
 import com.efacility.ticketing.dto.StanDTO;
 import com.efacility.ticketing.dto.request.CreateStanRequest;
+import com.efacility.ticketing.dto.request.AssignStanTenantRequest;
 import com.efacility.ticketing.dto.request.UpdateStanRequest;
+import com.efacility.ticketing.model.Korisnik;
 import com.efacility.ticketing.service.StanService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +43,14 @@ public class StanController {
         );
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<Response> getMy(@AuthenticationPrincipal Korisnik currentKorisnik) {
+        List<StanDTO> apartments = apartmentService.getMy(currentKorisnik.getId());
+        return ResponseEntity.ok(
+                HttpResponse.getResponseWithData("Stanovi su učitani.", Map.of("apartments", apartments), HttpStatus.OK)
+        );
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Response> getStan(@PathVariable Long id) {
         StanDTO apartment = apartmentService.getStan(id);
@@ -61,6 +72,18 @@ public class StanController {
         StanDTO apartment = apartmentService.updateStan(request);
         return ResponseEntity.ok(
                 HttpResponse.getResponseWithData("Stan je uspešno ažuriran!", Map.of("apartment", apartment), HttpStatus.OK)
+        );
+    }
+
+    @PutMapping("/{apartmentId}/assign-tenant")
+    public ResponseEntity<Response> assignTenant(@PathVariable Long apartmentId,
+                                                  @RequestBody AssignStanTenantRequest request) {
+        StanDTO apartment = apartmentService.assignTenant(apartmentId, request.getTenantId());
+        String message = request.getTenantId() == null
+                ? "Stanar je uklonjen iz stana."
+                : "Stanar je uspešno dodeljen stanu.";
+        return ResponseEntity.ok(
+                HttpResponse.getResponseWithData(message, Map.of("apartment", apartment), HttpStatus.OK)
         );
     }
 

@@ -8,6 +8,7 @@ import com.efacility.ticketing.model.enums.Prioritet;
 import com.efacility.ticketing.model.enums.StatusTiketa;
 import com.efacility.ticketing.model.enums.Uloga;
 import com.efacility.ticketing.repository.TiketRepository;
+import com.efacility.ticketing.service.impl.TiketExportServiceImpl;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Path;
@@ -56,7 +57,7 @@ class TiketExportServiceTest {
 
     @BeforeEach
     void setUp() {
-        exportService = new TiketExportService(ticketRepository);
+        exportService = new TiketExportServiceImpl(ticketRepository);
 
         manager = korisnik(1L, "Marko", "Markovic", Uloga.MANAGER);
         technician = korisnik(2L, "Petar", "Petrovic", Uloga.TECHNICIAN);

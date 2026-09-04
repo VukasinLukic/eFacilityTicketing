@@ -18,4 +18,6 @@ public class UpdateStanRequest {
 
     @NotNull(message = "Zgrada je obavezna")
     private Long buildingId;
+
+    private Long tenantId;
 }

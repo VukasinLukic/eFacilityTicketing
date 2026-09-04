@@ -8,4 +8,5 @@ public class StanDTO implements DomainDTO {
     private String number;
     private int floor;
     private ZgradaDTO building;
+    private KorisnikDTO tenant;
 }

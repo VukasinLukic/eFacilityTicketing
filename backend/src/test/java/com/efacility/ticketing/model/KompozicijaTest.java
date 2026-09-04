@@ -176,4 +176,32 @@ class KompozicijaTest {
 
         assertThat(istiBroj.getId()).isNotNull();
     }
+
+    @Test
+    void stanMozePrivremenoBitiBezStanara() {
+        em.flush();
+        em.clear();
+
+        Stan loaded = apartmentRepository.findById(apartment.getId()).orElseThrow();
+
+        assertThat(loaded.getTenant()).isNull();
+    }
+
+    @Test
+    void jedanStanarMozeImatiViseStanova() {
+        apartment.setTenant(tenant);
+
+        Stan drugiStan = new Stan();
+        drugiStan.setNumber("5A");
+        drugiStan.setFloor(4);
+        drugiStan.setBuilding(building);
+        drugiStan.setTenant(tenant);
+        em.persist(drugiStan);
+        em.flush();
+        em.clear();
+
+        assertThat(apartmentRepository.findByTenantId(tenant.getId()))
+                .extracting(Stan::getNumber)
+                .containsExactlyInAnyOrder("4B", "5A");
+    }
 }

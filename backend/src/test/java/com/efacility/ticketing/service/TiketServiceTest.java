@@ -16,6 +16,7 @@ import com.efacility.ticketing.model.enums.Uloga;
 import com.efacility.ticketing.repository.KorisnikRepository;
 import com.efacility.ticketing.repository.StanRepository;
 import com.efacility.ticketing.repository.TiketRepository;
+import com.efacility.ticketing.service.impl.TiketServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,7 +57,7 @@ class TiketServiceTest {
 
     @BeforeEach
     void setUp() {
-        tiketService = new TiketService(ticketRepository, apartmentRepository, userRepository,
+        tiketService = new TiketServiceImpl(ticketRepository, apartmentRepository, userRepository,
                 ticketMapper, ticketHistoryService, new TiketPristup(), emailService);
 
         technician = new Korisnik();
@@ -189,6 +190,7 @@ class TiketServiceTest {
 
         Stan apartment = new Stan();
         apartment.setId(4L);
+        apartment.setTenant(tenant);
 
         CreateTiketRequest request = new CreateTiketRequest();
         request.setTitle("Curi slavina");
@@ -196,11 +198,29 @@ class TiketServiceTest {
         request.setPriority(Prioritet.HIGH);
         request.setApartmentId(4L);
 
-        when(apartmentRepository.findById(4L)).thenReturn(Optional.of(apartment));
+        when(apartmentRepository.findByIdAndTenantId(4L, 3L)).thenReturn(Optional.of(apartment));
         when(userRepository.findById(3L)).thenReturn(Optional.of(tenant));
 
         tiketService.createTiket(request, tenant);
 
         verify(ticketHistoryService, never()).createHistoryEntry(any(), any(), any(), any());
+    }
+
+    @Test
+    void tenantCannotCreateTicketForApartmentThatIsNotAssignedToThem() {
+        Korisnik tenant = new Korisnik();
+        tenant.setId(3L);
+        tenant.setRole(Uloga.TENANT);
+
+        CreateTiketRequest request = new CreateTiketRequest();
+        request.setApartmentId(99L);
+
+        when(apartmentRepository.findByIdAndTenantId(99L, 3L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> tiketService.createTiket(request, tenant))
+                .isInstanceOf(TiketAccessDeniedException.class)
+                .hasMessage("Možete prijaviti kvar samo za stan koji vam je dodeljen.");
+
+        verify(ticketRepository, never()).save(any());
     }
 }
